@@ -43,7 +43,7 @@ class GatewayDetectWorker(QThread):
 
         if gw_ip:
             # Measure Ping Latency to Gateway
-            ping_res = PingTool.ping(gw_ip, count=2, timeout=1.5)
+            ping_res = PingTool.ping(gw_ip, count=2, timeout_ms=1500)
             if ping_res.get("packets_received", 0) > 0:
                 latency = ping_res.get("avg_rtt_ms", 1.2)
 

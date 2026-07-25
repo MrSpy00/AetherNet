@@ -1,6 +1,14 @@
+import sys
+import io
 from dataclasses import dataclass
 from typing import Optional
 from loguru import logger
+
+class DummyStream(io.StringIO):
+    def fileno(self):
+        return 1
+    def isatty(self):
+        return False
 
 @dataclass
 class SpeedtestResult:
@@ -15,7 +23,16 @@ class SpeedtestTool:
 
     @staticmethod
     def run_test() -> Optional[SpeedtestResult]:
+        orig_stdout = sys.stdout
+        orig_stderr = sys.stderr
+
         try:
+            # Prevent 'NoneType' object has no attribute 'fileno' crash in PyInstaller --noconsole
+            if sys.stdout is None:
+                sys.stdout = DummyStream()
+            if sys.stderr is None:
+                sys.stderr = DummyStream()
+
             import speedtest
             st = speedtest.Speedtest(secure=True)
             st.get_best_server()
@@ -39,3 +56,6 @@ class SpeedtestTool:
         except Exception as e:
             logger.error(f"Speedtest execution failed: {e}")
             return None
+        finally:
+            sys.stdout = orig_stdout
+            sys.stderr = orig_stderr

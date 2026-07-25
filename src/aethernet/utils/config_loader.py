@@ -3,12 +3,13 @@ import yaml
 from pathlib import Path
 from typing import Any, Dict
 from loguru import logger
+from aethernet.utils.path_utils import get_asset_path
 
 class ConfigManager:
     """YAML tabanlı konfigürasyon yöneticisi"""
 
     def __init__(self, config_path: str = "config/config.default.yaml"):
-        self.config_path = Path(config_path)
+        self.config_path = get_asset_path(config_path)
         self._config: Dict[str, Any] = {}
         self.load_config()
 
@@ -49,6 +50,8 @@ class ConfigManager:
 
     def save(self) -> bool:
         try:
+            # Ensure parent directory exists
+            self.config_path.parent.mkdir(parents=True, exist_ok=True)
             with open(self.config_path, "w", encoding="utf-8") as f:
                 yaml.dump(self._config, f, allow_unicode=True, default_flow_style=False)
             return True
