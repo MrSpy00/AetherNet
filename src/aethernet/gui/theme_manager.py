@@ -49,6 +49,14 @@ class ThemeManager:
             "card_bg": "#181824",
             "grad_start": "#6272a4",
             "grad_end": "#bd93f9"
+        },
+        "aegis_violet": {
+            "accent": "#a855f7",
+            "secondary": "#00f2fe",
+            "bg_dark": "#030712",
+            "card_bg": "#0d081a",
+            "grad_start": "#7c3aed",
+            "grad_end": "#c084fc"
         }
     }
 

@@ -37,18 +37,24 @@ class Sidebar(QFrame):
         if not logo_path.exists():
             logo_path = get_asset_path("assets/icon.ico")
         
+        pix = None
         if logo_path.exists():
-            pix = QPixmap(str(logo_path)).scaled(28, 28, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            rounded_pix = QPixmap(28, 28)
-            rounded_pix.fill(Qt.transparent)
-            painter = QPainter(rounded_pix)
-            painter.setRenderHint(QPainter.Antialiasing)
-            path = QPainterPath()
-            path.addRoundedRect(0, 0, 28, 28, 7, 7)
-            painter.setClipPath(path)
-            painter.drawPixmap(0, 0, pix)
-            painter.end()
-            self.lbl_logo.setPixmap(rounded_pix)
+            pix = QPixmap(str(logo_path))
+
+        if not pix or pix.isNull():
+            pix = IconManager.get_pixmap("network", color="#00f2fe", size=28)
+
+        pix_scaled = pix.scaled(28, 28, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        rounded_pix = QPixmap(28, 28)
+        rounded_pix.fill(Qt.transparent)
+        painter = QPainter(rounded_pix)
+        painter.setRenderHint(QPainter.Antialiasing)
+        path = QPainterPath()
+        path.addRoundedRect(0, 0, 28, 28, 7, 7)
+        painter.setClipPath(path)
+        painter.drawPixmap(0, 0, pix_scaled)
+        painter.end()
+        self.lbl_logo.setPixmap(rounded_pix)
 
         self.header_layout.addWidget(self.lbl_logo)
 

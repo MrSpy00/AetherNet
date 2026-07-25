@@ -67,6 +67,7 @@ class ProfilesView(QWidget):
         ])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.cellDoubleClicked.connect(self._on_cell_double_clicked)
+        layout.addWidget(self.table)
         self.load_profiles(include_passwords=False)
 
     def closeEvent(self, event):

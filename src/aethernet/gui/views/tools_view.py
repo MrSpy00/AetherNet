@@ -187,10 +187,21 @@ class ToolsView(QWidget):
 
     def _run_whois(self):
         target = self.input_whois_target.text().strip()
-        data = WhoisTool.lookup(target)
-        out = f"--- [WHOIS / RDAP REGISTRY SORGUSU: {target}] ---\n"
-        for k, v in data.items():
-            out += f"{k:<20}: {v}\n"
+        res = WhoisTool.lookup_domain(target)
+        out = (
+            f"--- [WHOIS / RDAP REGISTRY SORGUSU: {res.domain}] ---\n"
+            f"Registrar           : {res.registrar or 'Bilinmiyor'}\n"
+            f"Kayıt Tarihi        : {res.creation_date or 'Bilinmiyor'}\n"
+            f"Bitiş Tarihi        : {res.expiration_date or 'Bilinmiyor'}\n"
+            f"İnternet Servis/Org : {res.org or 'Bilinmiyor'}\n"
+            f"Ülke / Şehir        : {res.country or 'Bilinmiyor'} / {res.city or 'Bilinmiyor'}\n"
+            f"IP Adresi           : {res.ip or 'Bilinmiyor'}\n"
+            f"ASN                 : {res.asn or 'Bilinmiyor'}\n"
+            f"Ad Sunucuları (NS)  : {', '.join(res.name_servers) if res.name_servers else 'Yok'}\n"
+            f"Danışılan Kaynaklar : {', '.join(res.sources_consulted) if res.sources_consulted else 'Yok'}\n"
+        )
+        if res.raw_text:
+            out += f"\n--- Ham WHOIS / RDAP Yanıtı ---\n{res.raw_text}"
         self.txt_whois_out.setText(out)
 
     def _setup_port_scan_tab(self):

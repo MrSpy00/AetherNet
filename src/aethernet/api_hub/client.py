@@ -142,7 +142,10 @@ class APIHttpClient:
                     attempt += 1
                     continue
                 else:
-                    logger.warning(f"HTTPError {e.code} for {full_url}")
+                    if e.code in (403, 404):
+                        logger.debug(f"HTTPError {e.code} for {full_url}")
+                    else:
+                        logger.warning(f"HTTPError {e.code} for {full_url}")
                     return None, e.code, latency
 
             except Exception as e:

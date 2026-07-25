@@ -13,6 +13,7 @@ from aethernet.api_hub.shodan_engine import ShodanEngine
 from aethernet.api_hub.dns_over_https import DoHEngine
 from aethernet.api_hub.public_api_catalog import PublicApiCatalog
 from aethernet.gui.components.stat_card import StatCard
+from aethernet.gui.components.map_widget import MapViewerWidget
 
 logger = logging.getLogger(__name__)
 
@@ -138,10 +139,18 @@ class APIHubView(QWidget):
         cards_layout.addWidget(self.card_proxy)
         layout.addLayout(cards_layout)
 
+        # Map & Details Horizontal Splitter
+        content_split = QHBoxLayout()
+
+        self.map_widget = MapViewerWidget()
+        content_split.addWidget(self.map_widget, stretch=1)
+
         self.txt_ip_details = QTextEdit()
         self.txt_ip_details.setReadOnly(True)
         self.txt_ip_details.setStyleSheet("background-color: #090d16; color: #38bdf8; font-family: Consolas; font-size: 13px; border: 1px solid #1e293b; border-radius: 6px;")
-        layout.addWidget(self.txt_ip_details)
+        content_split.addWidget(self.txt_ip_details, stretch=1)
+
+        layout.addLayout(content_split)
 
     def _on_ip_lookup(self):
         target = self.txt_ip.text().strip()
@@ -154,6 +163,9 @@ class APIHubView(QWidget):
         
         proxy_state = "VPN/Proxy Tespit Edildi" if res.is_proxy or res.is_vpn else "Temiz"
         self.card_proxy.set_value(proxy_state)
+
+        # Update Map View Pin
+        self.map_widget.update_location(res.latitude, res.longitude, res.ip, res.city, res.country, res.isp)
 
         details = [
             f"=== IP İSTİHBARAT RAPORU ===",
