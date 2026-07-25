@@ -2,7 +2,7 @@ from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QLineEdit, QPushButton, QTextEdit, QTabWidget, QComboBox, QFrame
 )
 from PySide6.QtGui import QGuiApplication
-from PySide6.QtCore import Qt, QSize
+from PySide6.QtCore import Qt, QSize, QThread, Signal
 from aethernet.network_tools.ping_tool import PingTool
 from aethernet.network_tools.dns_tool import DnsTool
 from aethernet.network_tools.whois_tool import WhoisTool
@@ -10,6 +10,14 @@ from aethernet.network_tools.port_scanner import PortScanner
 from aethernet.network_tools.ssl_checker import SslChecker
 from aethernet.network_tools.speedtest_tool import SpeedtestTool
 from aethernet.gui.icon_manager import IconManager
+from aethernet.gui.components.toast import ToastNotification
+
+class SpeedtestWorkerThread(QThread):
+    finished_signal = Signal(object)
+
+    def run(self):
+        res = SpeedtestTool.run_test()
+        self.finished_signal.emit(res)
 
 class ToolsView(QWidget):
     """Network Diagnostic Tools Suite View with Cyber Terminal Output & Vector Icons"""
@@ -18,6 +26,7 @@ class ToolsView(QWidget):
         super().__init__(parent)
         self.adapter = platform_adapter
         self.i18n = i18n
+        self.speed_worker = None
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(20, 20, 20, 20)
@@ -69,7 +78,13 @@ class ToolsView(QWidget):
         txt_out.setProperty("class", "terminal-out")
         term_layout.addWidget(txt_out)
 
-        btn_copy.clicked.connect(lambda: QGuiApplication.clipboard().setText(txt_out.toPlainText()))
+        def _do_copy():
+            text = txt_out.toPlainText()
+            if text:
+                QGuiApplication.clipboard().setText(text)
+                ToastNotification.show_toast(self, "✓ Konsol Çıktısı Panoya Kopyalandı!", is_success=True)
+
+        btn_copy.clicked.connect(_do_copy)
         btn_clear.clicked.connect(lambda: txt_out.clear())
 
         parent_layout.addWidget(term_box)
@@ -99,29 +114,29 @@ class ToolsView(QWidget):
         target = self.input_ping.text().strip()
         res = PingTool.ping(target)
         out = (
-            f"--- [PING TESTİ BAŞLATILDI]: {res.target} ---\n"
-            f"Paket Durumu   : Gönderilen: {res.sent} | Alınan: {res.received} | Kayıp: %{res.loss_percent}\n"
-            f"Gecikme (RTT)  : Min: {res.min_ms} ms | Max: {res.max_ms} ms | Ortalama: {res.avg_ms} ms\n"
-            f"Jitter (Seğirme): {res.jitter_ms} ms\n"
-            f"Yanıt Detayları: {res.replies}\n"
-            f"-----------------------------------------------\n"
+            f"--- [PING ANALİZİ: {res.target}] ---\n"
+            f"Gönderilen Paket : {res.sent}\n"
+            f"Alınan Paket     : {res.received}\n"
+            f"Paket Kaybı      : %{res.loss_percent}\n"
+            f"En Düşük Latency : {res.min_ms} ms\n"
+            f"En Yüksek Latency: {res.max_ms} ms\n"
+            f"Ortalama Latency : {res.avg_ms} ms\n"
+            f"Jitter           : {res.jitter_ms} ms\n"
         )
         self.txt_ping_out.setText(out)
 
     def _setup_dns_tab(self):
         tab = QWidget()
         t_layout = QVBoxLayout(tab)
-
         row = QHBoxLayout()
         self.input_dns_domain = QLineEdit("google.com")
         self.combo_dns_type = QComboBox()
-        self.combo_dns_type.addItems(["A", "AAAA", "MX", "TXT", "NS", "CNAME", "SOA"])
-        btn = QPushButton(" DNS Sorgula")
+        self.combo_dns_type.addItems(["A", "AAAA", "MX", "TXT", "NS", "CNAME"])
+        btn = QPushButton(" Dns Sorgula")
         btn.setIcon(IconManager.get_icon("dns", color="#ffffff", size=16))
         btn.setIconSize(QSize(16, 16))
         btn.setProperty("class", "btn-primary")
         btn.clicked.connect(self._run_dns)
-
         row.addWidget(QLabel("Domain:"))
         row.addWidget(self.input_dns_domain)
         row.addWidget(QLabel("Kayıt Tipi:"))
@@ -137,42 +152,38 @@ class ToolsView(QWidget):
         domain = self.input_dns_domain.text().strip()
         rtype = self.combo_dns_type.currentText()
         records = DnsTool.query(domain, rtype)
+        out = f"--- [DNS SORGUSU: {domain} ({rtype})] ---\n"
         if records:
-            out = f"--- [DNS SORGUSU: {domain} ({rtype})] ---\n" + "\n".join([f"[{r.record_type}] TTL: {r.ttl}s -> {r.value}" for r in records])
+            out += "\n".join([f" - {r}" for r in records])
         else:
-            out = "Kayıt bulunamadı veya DNS sorgusu zaman aşımına uğradı."
+            out += "Kayıt bulunamadı veya sorgu zaman aşımına uğradı."
         self.txt_dns_out.setText(out)
 
     def _setup_whois_tab(self):
         tab = QWidget()
         t_layout = QVBoxLayout(tab)
         row = QHBoxLayout()
-        self.input_whois = QLineEdit("aegissoft.com.tr")
-        btn = QPushButton(" WHOIS / RDAP Sorgula")
+        self.input_whois_target = QLineEdit("google.com")
+        btn = QPushButton(" WHOIS / RDAP SORGULA")
         btn.setIcon(IconManager.get_icon("whois", color="#ffffff", size=16))
         btn.setIconSize(QSize(16, 16))
         btn.setProperty("class", "btn-primary")
         btn.clicked.connect(self._run_whois)
-        row.addWidget(QLabel("Domain veya IP:"))
-        row.addWidget(self.input_whois)
+        row.addWidget(QLabel("Domain / IP:"))
+        row.addWidget(self.input_whois_target)
         row.addWidget(btn)
         t_layout.addLayout(row)
 
         self.txt_whois_out = self._create_terminal_widget(t_layout)
-        idx = self.tabs.addTab(tab, "WHOIS / RDAP")
+        idx = self.tabs.addTab(tab, "WHOIS & RDAP")
         self.tabs.setTabIcon(idx, IconManager.get_icon("whois", color="#38bdf8", size=16))
 
     def _run_whois(self):
-        target = self.input_whois.text().strip()
-        res = WhoisTool.lookup_domain(target)
-        out = (
-            f"--- [WHOIS / RDAP KAYDI: {res.domain}] ---\n"
-            f"Çözümlenen IP : {res.ip or 'Bilinmiyor'}\n"
-            f"Registrar    : {res.registrar or 'N/A'}\n"
-            f"Kayıt Tarihi : {res.creation_date or 'N/A'}\n"
-            f"Son Kullanma : {res.expiration_date or 'N/A'}\n"
-            f"Name Servers : {res.name_servers or []}\n"
-        )
+        target = self.input_whois_target.text().strip()
+        data = WhoisTool.lookup(target)
+        out = f"--- [WHOIS / RDAP REGISTRY SORGUSU: {target}] ---\n"
+        for k, v in data.items():
+            out += f"{k:<20}: {v}\n"
         self.txt_whois_out.setText(out)
 
     def _setup_port_scan_tab(self):
@@ -180,7 +191,7 @@ class ToolsView(QWidget):
         t_layout = QVBoxLayout(tab)
         row = QHBoxLayout()
         self.input_port_target = QLineEdit("127.0.0.1")
-        btn = QPushButton(" Port Taramasını Başlat")
+        btn = QPushButton(" Port Taraması Başlat")
         btn.setIcon(IconManager.get_icon("port", color="#ffffff", size=16))
         btn.setIconSize(QSize(16, 16))
         btn.setProperty("class", "btn-primary")
@@ -196,7 +207,7 @@ class ToolsView(QWidget):
 
     def _run_port_scan(self):
         target = self.input_port_target.text().strip()
-        results = PortScanner.scan_target(target)
+        results = PortScanner.scan_common_ports(target)
         if results:
             out = f"--- [PORT TARAMA SONUÇLARI: {target}] ---\n" + "\n".join([f"Port {r.port}/TCP: AÇIK ({r.service})" for r in results])
         else:
@@ -243,29 +254,38 @@ class ToolsView(QWidget):
     def _setup_speedtest_tab(self):
         tab = QWidget()
         t_layout = QVBoxLayout(tab)
-        btn = QPushButton(" Hız Testini Başlat")
-        btn.setIcon(IconManager.get_icon("speed", color="#ffffff", size=16))
-        btn.setIconSize(QSize(16, 16))
-        btn.setProperty("class", "btn-primary")
-        btn.clicked.connect(self._run_speedtest)
-        t_layout.addWidget(btn)
+        self.btn_speed = QPushButton(" En Yakın Sunucudan Hız Testini Başlat")
+        self.btn_speed.setIcon(IconManager.get_icon("speed", color="#ffffff", size=16))
+        self.btn_speed.setIconSize(QSize(16, 16))
+        self.btn_speed.setProperty("class", "btn-primary")
+        self.btn_speed.clicked.connect(self._run_speedtest)
+        t_layout.addWidget(self.btn_speed)
 
         self.txt_speed_out = self._create_terminal_widget(t_layout)
         idx = self.tabs.addTab(tab, "Hız Testi")
         self.tabs.setTabIcon(idx, IconManager.get_icon("speed", color="#38bdf8", size=16))
 
     def _run_speedtest(self):
-        self.txt_speed_out.setText("Hız testi çalıştırılıyor... Lütfen bekleyin...")
-        res = SpeedtestTool.run_test()
+        self.btn_speed.setEnabled(False)
+        self.txt_speed_out.setText("En yakın ve en hızlı Speedtest sunucusu aranıyor ve bant genişliği ölçülüyor...\nLütfen bekleyin...")
+        
+        self.speed_worker = SpeedtestWorkerThread()
+        self.speed_worker.finished_signal.connect(self._on_speedtest_finished)
+        self.speed_worker.start()
+
+    def _on_speedtest_finished(self, res):
+        self.btn_speed.setEnabled(True)
         if res:
             out = (
                 f"--- [HIZ TESTİ SONUÇLARI] ---\n"
                 f"İndirme Hızı (Download) : {res.download_mbps} Mbps\n"
                 f"Yükleme Hızı (Upload)   : {res.upload_mbps} Mbps\n"
                 f"Ping / Gecikme          : {res.ping_ms} ms\n"
-                f"Test Sunucusu           : {res.server_name}\n"
+                f"Seçilen En Yakın Sunucu : {res.server_name}\n"
                 f"İnternet IP             : {res.client_ip}\n"
             )
+            ToastNotification.show_toast(self, "✓ Hız Testi Başarıyla Tamamlandı!", is_success=True)
         else:
             out = "Hız testi sırasında hata oluştu. Ağ bağlantınızı kontrol edin."
+            ToastNotification.show_toast(self, "Hız Testi Tamamlanamadı", is_success=False)
         self.txt_speed_out.setText(out)

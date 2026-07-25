@@ -19,7 +19,7 @@ class SpeedtestResult:
     client_ip: str
 
 class SpeedtestTool:
-    """Bandwidth Speedtest tool using speedtest-cli or fallback simulation"""
+    """Bandwidth Speedtest tool using speedtest-cli with closest server auto-discovery"""
 
     @staticmethod
     def run_test() -> Optional[SpeedtestResult]:
@@ -35,9 +35,20 @@ class SpeedtestTool:
 
             import speedtest
             st = speedtest.Speedtest(secure=True)
-            st.get_best_server()
-            server_info = st.best.get("name", "Unknown Server")
-            client_ip = st.config.get("client", {}).get("ip", "Unknown IP")
+            
+            # Fetch closest servers and evaluate ping to select absolute lowest-latency node
+            logger.info("En yakın ve en hızlı Speedtest sunucuları aranıyor...")
+            st.get_servers([])
+            best = st.get_best_server()
+
+            sponsor = best.get("sponsor", "Otomatik Sunucu")
+            city = best.get("name", "Bölgesel Node")
+            country = best.get("country", "")
+            server_info = f"{sponsor} ({city}, {country})" if country else f"{sponsor} ({city})"
+
+            client_ip = st.config.get("client", {}).get("ip", "Bilinmiyor")
+
+            logger.info(f"Seçilen en yakın sunucu: {server_info} | Latency: {best.get('latency', 0):.1f} ms")
 
             download_bps = st.download()
             upload_bps = st.upload()
