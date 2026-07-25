@@ -3,25 +3,20 @@
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![PySide6](https://img.shields.io/badge/GUI-PySide6%20%28Qt6%29-green.svg)](https://pypi.org/project/PySide6/)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
-[![Developer](https://img.shields.io/badge/Developer-MrSpy00-cyan.svg)](https://github.com/MrSpy00)
 
-> **AetherNet**, kablosuz ağ adaptörlerinizi, aktif bağlantılarınızı, kayıtlı profillerinizi ve çevrenizdeki WiFi ortamını eksiksiz görüntüleyip yönetmenizi sağlayan; aynı zamanda gelişmiş ağ tanılamaları, yerel cihaz envanteri, güvenlik/savunma analizleri ve yetkilendirilmiş pentest araç entegrasyonlarını tek bir Cyber-Noir arayüzde birleştiren profesyonel, masaüstü bir ağ yönetim hub'ıdır.
-
-- **Pluggable AI Sağlayıcı Katmanı**: Doğal dilde ağ analizi ve tanılama sohbetleri için **DeepSeek**, **Groq Cloud** ([console.groq.com/keys](https://console.groq.com/keys)), **Mistral AI** ([console.mistral.ai](https://console.mistral.ai/)), OpenAI, Anthropic Claude, Google Gemini ve yerel Ollama desteği.
+> **AetherNet**, kablosuz ağ adaptörlerinizi, aktif bağlantılarınızı, kayıtlı profillerinizi ve çevrenizdeki WiFi ortamını eksiksiz görüntüleyip yönetmenizi sağlayan; aynı zamanda gelişmiş ağ tanılamaları, yerel cihaz envanteri, güvenlik/savunma analizleri, AI sağlayıcıları ve yetkilendirilmiş pentest araç entegrasyonlarını tek bir Cyber-Noir arayüzde birleştiren masaüstü ağ yönetim hub'ıdır.
 
 ---
 
 ## 🇹🇷 Türkçe Dokümantasyon
-
 
 ### 📋 İçindekiler
 1. [Proje Vizyonu](#-proje-vizyonu)
 2. [Modül ve Özellik Detayları](#-mod%C3%BCl-ve-%C3%B6zellik-detaylar%C4%B1)
 3. [Proje Mimarisi ve Klasör Yapısı](#-proje-mimarisi-ve-klas%C3%B6r-yap%C4%B1s%C4%B1)
 4. [Sistem Gereksinimleri ve Kurulum](#-sistem-gereksinimleri-ve-kurulum)
-5. [Kullanım Rehberi](#-kullan%C4%B1m-rehberi)
-6. [Güvenlik, Gizlilik ve Etik Onay](#-g%C3%BCvenlik-gizlilik-ve-etik-onay)
-7. [Geliştirici Künyesi](#-geli%C5%9Ftirici-k%C3%BCnyesi)
+5. [Güvenlik, Gizlilik ve Etik Onay](#-g%C3%BCvenlik-gizlilik-ve-etik-onay)
+6. [Geliştirici & Lisans](#-geli%C5%9Ftirici--lisans)
 
 ---
 
@@ -40,7 +35,7 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 
 #### 2. 🔑 Kayıtlı WiFi Profilleri Yönetimi
 - **Profil Listesi**: Sistemde kayıtlı tüm WiFi ağlarının ve güvenlik tiplerinin listelenmesi.
-- **Parola Görüntüleme**: Yerel makinede kayıtlı ağ şifrelerinin yönetici (Administrator) izniyle güvenli şekilde görüntülenmesi.
+- **Parola Görüntüleme**: Yerel makinede kayıtlı ağ şifrelerinin yönetici izniyle güvenli şekilde görüntülenmesi.
 - **Profil Kontrolü**: Ağ bağlantısını tetikleme veya mevcut bağlantıyı kesme.
 
 #### 3. 🔍 Çevresel Ağ & Ortam Taraması
@@ -64,15 +59,17 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 - **Ağ Güvenlik Skoru**: Şifreleme standartları, açık ağ riski ve WPS durumuna göre 0-100 arası güvenlik skoru.
 - **Sahte AP (Evil Twin / Rogue AP) Tespiti**: Aynı SSID'nin yetkisiz BSSID'lerden veya farklı şifreleme yöntemleriyle yayınlanması durumunda otomatik uyarı.
 
-#### 7. ⚡ Certified Pentest Orchestrator
+#### 7. 🤖 AI Sağlayıcı Entegrasyonu
+- **Çoklu AI Desteği**: Doğal dilde ağ analizi ve tanılama için DeepSeek, Groq Cloud ([console.groq.com/keys](https://console.groq.com/keys)), Mistral AI ([console.mistral.ai](https://console.mistral.ai/)), OpenAI, Anthropic Claude, Google Gemini ve yerel Ollama entegrasyonu.
+
+#### 8. ⚡ Certified Pentest Orchestrator
 - **Yetkilendirme Kapısı (Authorization Gate)**: Kullanıcının yalnızca sahibi olduğu veya yazılı izin aldığı ağlarda tarama yapacağını taahhüt ettiği yasal onay ekranı.
-- **Harici Araç Entegrasyonu**: Nmap ve Tshark gibi endüstri standardı güvenlik araçlarının güvenli subprocess orkestrasyonu.
+- **Harici Araç Entegrasyonu**: Nmap ve Tshark gibi endüstri standardı güvenlik araçlarının subprocess orkestrasyonu.
 - **Audit Logging**: Tüm tarama eylemlerinin zaman damgalı olarak `logs/audit.jsonl` dosyasına kaydedilmesi.
 
-#### 8. 🎨 PySide6 GUI & UX
+#### 9. 🎨 PySide6 GUI & UX
 - **Cyber-Noir Dark Tema**: Neon vurgulara sahip modern QSS arayüz tasarımı.
 - **Çoklu Dil (i18n)**: Türkçe (Varsayılan), İngilizce, Almanca ve İspanyolca dil desteği.
-- **Geliştirici İmzası**: Ayarlar menüsünde yer alan geliştirici profili ([https://github.com/MrSpy00](https://github.com/MrSpy00)).
 
 ---
 
@@ -82,6 +79,7 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 AetherNet/
 ├── .env.example              # Örnek çevre değişkenleri dosyası
 ├── .gitignore                # Güvenli .gitignore yapılandırması
+├── LICENSE                   # MIT Lisans belgesi
 ├── pyproject.toml            # Proje bağımlılıkları ve pytest ayarları
 ├── README.md                 # Çift dilli proje dokümantasyonu
 ├── config/
@@ -90,6 +88,7 @@ AetherNet/
 │   └── aethernet/
 │       ├── __init__.py
 │       ├── main.py           # Uygulama giriş noktası
+│       ├── ai/               # Groq, Mistral, DeepSeek AI sağlayıcıları
 │       ├── core/             # Veri modelleri (models.py)
 │       ├── network_tools/    # Ping, DNS, WHOIS, PortScanner, Speedtest, SSL
 │       ├── discovery/        # ARP Discovery & MAC Vendor OUI resolver
@@ -98,8 +97,7 @@ AetherNet/
 │       ├── gui/              # PySide6 Arayüzü (ThemeManager, i18n, Views, Components)
 │       ├── platform/         # OS Soyutlama katmanı (windows.py)
 │       └── utils/            # Logger (loguru) & ConfigLoader
-├── tests/
-│   └── test_core.py          # Pytest birim testleri
+├── tests/                    # Birim testleri
 └── scripts/
     └── build_exe.py          # PyInstaller derleme betiği
 ```
@@ -109,7 +107,7 @@ AetherNet/
 ### 💻 Sistem Gereksinimleri ve Kurulum
 
 #### Gereksinimler
-- **İşletim Sistemi**: Windows 10/11 (Birincil destek), Linux/macOS (Soyutlama katmanı ile genişletilebilir)
+- **İşletim Sistemi**: Windows 10/11 (Birincil destek), Linux/macOS
 - **Python**: v3.11 veya üzeri
 
 #### Adım Adım Kurulum
@@ -141,7 +139,7 @@ pip install -e .
 python src/aethernet/main.py
 ```
 
-5. Birim testleri çalıştırmak için:
+5. Birim testleri çalıştırın:
 ```bash
 pytest
 ```
@@ -151,16 +149,14 @@ pytest
 ### 🔒 Güvenlik, Gizlilik ve Etik Onay
 
 - **Sıfır Veri Sızıntısı**: Kayıtlı profiller, ağ verileri ve tarama geçmişi tamamen yerel makinenizde kalır.
-- **Hassas Veri Gizliliği**: `.env` dosyası ve yerel veritabanları varsayılan olarak `.gitignore` ile korunmaktadır.
+- **Hassas Veri Gizliliği**: `.env` dosyası ve yerel veritabanları `.gitignore` ile korunmaktadır.
 - **Etik Kullanım Taahhüdü**: Pentest modülü, kullanıcının yasal sorumluluk reddini onaylamaması durumunda çalışmaz.
 
 ---
 
-### 👨‍💻 Geliştirici Künyesi
+### 👨‍💻 Geliştirici & Lisans
 
-- **Geliştirici / Mimar**: MrSpy00
-- **GitHub Profil**: [https://github.com/MrSpy00](https://github.com/MrSpy00)
-- **Proje Deposu**: [https://github.com/MrSpy00/AetherNet](https://github.com/MrSpy00/AetherNet)
+Bu proje **[MrSpy00](https://github.com/MrSpy00)** tarafından geliştirilmiştir ve [MIT Lisansı](LICENSE) altında sunulmaktadır.
 
 ---
 ---
@@ -168,77 +164,73 @@ pytest
 ## 🇬🇧 English Documentation
 
 ### 📋 Table of Contents
-1. [Project Vision](#-project-vision)
-2. [Modules and Feature Details](#-modules-and-feature-details)
-3. [Project Architecture and Directory Structure](#-project-architecture-and-directory-structure)
-4. [System Requirements and Installation](#-system-requirements-and-installation)
-5. [Usage Guide](#-usage-guide)
-6. [Security, Privacy and Ethical Compliance](#-security-privacy-and-ethical-compliance)
-7. [Developer Profile](#-developer-profile)
+1. [Project Vision](#-project-vision-1)
+2. [Modules and Feature Details](#-modules-and-feature-details-1)
+3. [Project Architecture and Directory Structure](#-project-architecture-and-directory-structure-1)
+4. [System Requirements and Installation](#-system-requirements-and-installation-1)
+5. [Security, Privacy and Ethical Compliance](#-security-privacy-and-ethical-compliance-1)
+6. [Developer & License](#-developer--license)
 
 ---
 
 ### 🌐 Project Vision
-AetherNet is an all-in-one desktop network management hub designed to provide immediate answers for everyday questions like *"Why is my WiFi slow?"* or *"Who is on my network?"*, while simultaneously serving as an extensible, type-safe network analysis platform for system administrators and security professionals.
+AetherNet is an all-in-one desktop network management hub designed to provide immediate answers for everyday questions like *"Why is my WiFi slow?"* or *"Who is on my network?"*, while serving as a type-safe network analysis platform for system administrators and security professionals.
 
 ---
 
 ### 🛠️ Modules and Feature Details
 
 #### 1. 📶 WiFi Adapter & Connection Management
-- **Adapter Inspector**: Enumeration of all system network interfaces (WiFi, Ethernet, Virtual Adapters), MAC addresses, driver versions, and operational statuses.
-- **Real-Time Signal Monitor**: Smooth 60-second signal strength history chart powered by `pyqtgraph` (% and dBm RSSI).
-- **Connection Parameters**: Detailed active SSID, BSSID, radio standards (802.11a/b/g/n/ac/ax/be), frequency bands (2.4/5/6 GHz), channel width (20/40/80/160 MHz), and security protocols (WPA3-Personal, WPA2-PSK, WEP, Open).
-- **Bandwidth Metrics**: Real-time link rates (Mbps) and cumulative sent/received byte and packet counts.
+- **Adapter Inspector**: Enumeration of all network interfaces (WiFi, Ethernet, Virtual Adapters), MAC addresses, and operational statuses.
+- **Real-Time Signal Monitor**: Smooth 60-second RSSI history chart (% and dBm) powered by `pyqtgraph`.
+- **Connection Parameters**: Active SSID, BSSID, standards (802.11a/b/g/n/ac/ax/be), bands (2.4/5/6 GHz), channel width, and security protocols.
+- **Bandwidth Metrics**: Real-time link rates (Mbps) and cumulative byte/packet counts.
 
 #### 2. 🔑 Saved WiFi Profiles Management
-- **Profile Manager**: List all saved WiFi profiles and security types stored on the local machine.
+- **Profile Manager**: List saved WiFi profiles and security configurations.
 - **Password Revealer**: Securely view saved network passwords with administrative privileges.
-- **Connection Trigger**: Seamlessly connect to saved profiles or disconnect from the current network.
 
 #### 3. 🔍 Wireless Environment & Congestion Scanner
-- **Live Environment Scanner**: List all visible and hidden SSIDs/BSSIDs in the vicinity.
-- **Channel Congestion Analysis**: Analyze channel utilization across 2.4 GHz and 5 GHz bands to suggest optimal channels.
+- **Live Environment Scanner**: List visible and hidden SSIDs/BSSIDs in the vicinity.
+- **Channel Congestion Analysis**: Channel density evaluation for optimal channel selection.
 
 #### 4. 💻 Local Network Discovery & Device Inventory (ARP Inventory)
-- **ARP Discovery**: Scan the local subnet to identify active IP and MAC addresses.
-- **MAC → OUI Vendor Resolver**: Automatically map device MAC addresses to manufacturers (Apple, Samsung, Raspberry Pi, TP-Link, Cisco, etc.).
-- **Device Classification**: Categorize devices into Routers, Smartphones, IoT devices, Virtual Machines, or PCs.
+- **ARP Discovery**: Scan local subnet for active IP and MAC addresses.
+- **MAC → OUI Vendor Resolver**: Map MAC addresses to manufacturers (Apple, Samsung, Raspberry Pi, TP-Link, Cisco, etc.).
 
 #### 5. 🛠️ Network Diagnostic Tools Suite
-- **📍 Ping & Jitter**: Latency statistics (min/max/avg), packet loss percentages, and jitter metrics.
-- **🌐 DNS Query**: Query A, AAAA, MX, TXT, NS, CNAME, SOA, and PTR (Reverse DNS) records.
-- **🔎 WHOIS & RDAP**: Domain registration dates, registrar info, and public IP geolocation/ASN data.
-- **🔌 TCP Port Scanner**: Multi-threaded TCP connect port scanner for common and custom ports.
-- **🔒 SSL/TLS Inspector**: Audit SSL/TLS certificate validity, expiration dates, protocol versions, and cipher suites.
-- **🚀 Bandwidth Speedtest**: Test download, upload, and latency speeds.
+- **📍 Ping & Jitter**: Latency statistics (min/max/avg), packet loss, and jitter analysis.
+- **🌐 DNS Query**: Query A, AAAA, MX, TXT, NS, CNAME, SOA, and PTR records.
+- **🔎 WHOIS & RDAP**: Domain registration dates, registrar details, and IP geolocation/ASN data.
+- **🔌 TCP Port Scanner**: Multi-threaded TCP connect port scanner.
+- **🔒 SSL/TLS Inspector**: Audit SSL/TLS certificate validity, expiration dates, protocol versions, and ciphers.
+- **🚀 Bandwidth Speedtest**: Download, upload, and ping speed measurements.
 
 #### 6. 🛡️ Security & Defense Modules
-- **Security Scorer**: Calculate a 0-100 network security score based on encryption strength, open network risks, and WPS status.
-- **Evil Twin / Rogue AP Detector**: Automatic detection and alerts for rogue access points broadcasting identical SSIDs from unauthorized BSSIDs.
+- **Security Scorer**: Calculate a 0-100 security score based on encryption strength and WPS status.
+- **Evil Twin / Rogue AP Detector**: Automatic detection and alerts for rogue access points.
 
-#### 7. ⚡ Certified Pentest Orchestrator
-- **Authorization Gate**: Mandatory disclaimer gate requiring user explicit consent to operate only on owned or legally authorized networks.
-- **Tool Orchestration**: Safe subprocess orchestration layer for industry-standard tools like Nmap and Tshark.
+#### 7. 🤖 AI Provider Integration
+- **Multi-AI Provider**: Natural language network diagnostics supporting DeepSeek, Groq Cloud ([console.groq.com/keys](https://console.groq.com/keys)), Mistral AI ([console.mistral.ai](https://console.mistral.ai/)), OpenAI, Anthropic Claude, Google Gemini, and local Ollama.
+
+#### 8. ⚡ Certified Pentest Orchestrator
+- **Authorization Gate**: Disclaimer gate requiring explicit user consent.
+- **Tool Orchestration**: Subprocess orchestration layer for Nmap and Tshark.
 - **Audit Logging**: Time-stamped JSONL audit trail recorded in `logs/audit.jsonl`.
 
-#### 8. 🎨 PySide6 GUI & UX
+#### 9. 🎨 PySide6 GUI & UX
 - **Cyber-Noir Dark Theme**: Sleek QSS desktop user interface featuring neon cyan accents.
 - **Multilingual Support (i18n)**: Native support for Turkish (Default), English, German, and Spanish.
-- **Developer Attribution**: Dedicated developer profile card and GitHub link ([https://github.com/MrSpy00](https://github.com/MrSpy00)).
-
-#### 9. 🤖 Pluggable AI Provider Layer
-- **Multi-Provider Support**: Integrated natural language network diagnostic assistance supporting **DeepSeek**, **Groq Cloud** ([console.groq.com/keys](https://console.groq.com/keys)), **Mistral AI** ([console.mistral.ai](https://console.mistral.ai/)), OpenAI, Anthropic Claude, Google Gemini, and local Ollama models with automatic provider fallback.
 
 ---
 
 ### 📐 Project Architecture and Directory Structure
 
-
 ```
 AetherNet/
 ├── .env.example              # Sample environment variables file
 ├── .gitignore                # Secure gitignore configuration
+├── LICENSE                   # MIT License file
 ├── pyproject.toml            # Project dependencies and pytest config
 ├── README.md                 # Bilingual documentation
 ├── config/
@@ -247,6 +239,7 @@ AetherNet/
 │   └── aethernet/
 │       ├── __init__.py
 │       ├── main.py           # Application entry point
+│       ├── ai/               # Groq, Mistral, DeepSeek AI providers
 │       ├── core/             # Data models (models.py)
 │       ├── network_tools/    # Ping, DNS, WHOIS, PortScanner, Speedtest, SSL
 │       ├── discovery/        # ARP Discovery & MAC Vendor OUI resolver
@@ -255,8 +248,7 @@ AetherNet/
 │       ├── gui/              # PySide6 GUI (ThemeManager, i18n, Views, Components)
 │       ├── platform/         # OS Abstraction layer (windows.py)
 │       └── utils/            # Logger (loguru) & ConfigLoader
-├── tests/
-│   └── test_core.py          # Pytest unit tests
+├── tests/                    # Unit tests
 └── scripts/
     └── build_exe.py          # PyInstaller build script
 ```
@@ -266,7 +258,7 @@ AetherNet/
 ### 💻 System Requirements and Installation
 
 #### Requirements
-- **Operating System**: Windows 10/11 (Primary target), Linux/macOS (Extensible via abstraction layer)
+- **Operating System**: Windows 10/11, Linux/macOS
 - **Python**: v3.11 or higher
 
 #### Step-by-Step Installation
@@ -307,14 +299,12 @@ pytest
 
 ### 🔒 Security, Privacy and Ethical Compliance
 
-- **Zero Remote Data Leakage**: All network scan records, profiles, and logs remain strictly on your local machine.
-- **Credential Protection**: The `.env` file and local databases are strictly excluded via `.gitignore`.
-- **Ethical Compliance**: The Pentest module remains completely disabled until explicit authorized consent is accepted.
+- **Zero Remote Data Leakage**: All scan records and logs remain strictly local.
+- **Credential Protection**: `.env` and local database files are excluded via `.gitignore`.
+- **Ethical Compliance**: The Pentest module requires explicit user consent before execution.
 
 ---
 
-### 👨‍💻 Developer Profile
+### 👨‍💻 Developer & License
 
-- **Developer / Architect**: MrSpy00
-- **GitHub Profile**: [https://github.com/MrSpy00](https://github.com/MrSpy00)
-- **Project Repository**: [https://github.com/MrSpy00/AetherNet](https://github.com/MrSpy00/AetherNet)
+Maintained by **[MrSpy00](https://github.com/MrSpy00)**. Distributed under the [MIT License](LICENSE).
