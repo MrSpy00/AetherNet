@@ -120,6 +120,8 @@ class MainWindow(QMainWindow):
     def _on_theme_changed(self, theme_name: str):
         self.current_theme = theme_name
         self.setStyleSheet(ThemeManager.get_theme_stylesheet(theme_name))
+        self.sidebar.update_theme(theme_name)
+        self.top_bar.update_theme(theme_name)
 
     def _on_timer_tick(self):
         # Refresh dashboard live metrics

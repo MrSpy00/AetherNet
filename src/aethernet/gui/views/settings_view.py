@@ -1,12 +1,13 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QSlider, QPushButton, QMessageBox, QFrame
 )
-from PySide6.QtCore import Qt, QUrl
+from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices
 from aethernet.utils.config_loader import ConfigManager
+from aethernet.gui.icon_manager import IconManager
 
 class SettingsView(QWidget):
-    """Application Settings & Developer Profile View"""
+    """Application Settings & Developer Profile View with Vector Icons"""
 
     def __init__(self, i18n, parent=None):
         super().__init__(parent)
@@ -17,7 +18,7 @@ class SettingsView(QWidget):
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(20)
 
-        lbl_header = QLabel("⚙️ Uygulama Ayarları & Geliştirici Künyesi")
+        lbl_header = QLabel("Uygulama Ayarları & Geliştirici Künyesi")
         lbl_header.setStyleSheet("font-size: 20px; font-weight: bold; color: #f8fafc;")
         layout.addWidget(lbl_header)
 
@@ -38,9 +39,16 @@ class SettingsView(QWidget):
 
         # Theme Selection
         row_theme = QHBoxLayout()
-        row_theme.addWidget(QLabel("Tema (Theme):"))
+        row_theme.addWidget(QLabel("Tema (Theme Palette):"))
         self.combo_theme = QComboBox()
-        self.combo_theme.addItems(["Cyber-Noir Dark", "Digital Fortress", "Synthwave"])
+        self.combo_theme.addItems([
+            "Cyber-Noir Dark",
+            "Digital Fortress",
+            "Synthwave",
+            "Solar Flare",
+            "Tokyo Night",
+            "Dracula Pro"
+        ])
         row_theme.addWidget(self.combo_theme)
         card_layout.addLayout(row_theme)
 
@@ -77,7 +85,9 @@ class SettingsView(QWidget):
         card_layout.addLayout(row_interval)
 
         # Save Button
-        btn_save = QPushButton("💾 Ayarları Kaydet")
+        btn_save = QPushButton(" Ayarları Kaydet")
+        btn_save.setIcon(IconManager.get_icon("export", color="#ffffff", size=16))
+        btn_save.setIconSize(QSize(16, 16))
         btn_save.setProperty("class", "btn-primary")
         btn_save.clicked.connect(self._save_settings)
         card_layout.addWidget(btn_save)
@@ -105,7 +115,9 @@ class SettingsView(QWidget):
         lbl_dev_info.setStyleSheet("color: #e2e8f0; font-size: 14px; line-height: 1.6;")
         dev_layout.addWidget(lbl_dev_info)
 
-        btn_github = QPushButton("🌐 GitHub Profilini Aç (https://github.com/MrSpy00)")
+        btn_github = QPushButton(" GitHub Profilini Aç (https://github.com/MrSpy00)")
+        btn_github.setIcon(IconManager.get_icon("folder", color="#00f2fe", size=16))
+        btn_github.setIconSize(QSize(16, 16))
         btn_github.setProperty("class", "btn-secondary")
         btn_github.setCursor(Qt.PointingHandCursor)
         btn_github.clicked.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/MrSpy00")))
