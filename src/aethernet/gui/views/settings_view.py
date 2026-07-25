@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QSlider, QPushButton, QMessageBox, QFrame, QLineEdit
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QSlider, QPushButton, QMessageBox, QFrame, QLineEdit, QFormLayout
 )
 from PySide6.QtCore import Qt, QUrl, QSize
 from PySide6.QtGui import QDesktopServices
@@ -19,28 +19,30 @@ class SettingsView(QWidget):
         layout.setContentsMargins(20, 20, 20, 20)
         layout.setSpacing(16)
 
-        lbl_header = QLabel("Uygulama Ayarları & Gelişmiş Yapılandırma")
+        lbl_header = QLabel("Uygulama Ayarları & Yapılandırma")
         lbl_header.setStyleSheet("font-size: 20px; font-weight: bold; color: #f8fafc;")
         layout.addWidget(lbl_header)
 
-        # Settings Panel Card
-        card_settings = QFrame()
-        card_settings.setProperty("class", "glass-panel")
-        card_settings.setStyleSheet("background-color: #0e131f; border: 1px solid #1a2336; border-radius: 12px; padding: 18px;")
-        card_layout = QVBoxLayout(card_settings)
-        card_layout.setSpacing(14)
+        # Settings Card 1: General & Appearance
+        card_general = QFrame()
+        card_general.setProperty("class", "glass-panel")
+        card_general.setStyleSheet("background-color: #0e131f; border: 1px solid #1a2336; border-radius: 12px; padding: 18px;")
+        gen_layout = QVBoxLayout(card_general)
+        gen_layout.setSpacing(12)
 
-        # Language Selection
-        row_lang = QHBoxLayout()
-        row_lang.addWidget(QLabel("Arayüz Dili (Language):"))
+        lbl_gen_title = QLabel("Görünüm ve Tarama Tercihleri")
+        lbl_gen_title.setStyleSheet("font-size: 14px; font-weight: bold; color: #00f2fe;")
+        gen_layout.addWidget(lbl_gen_title)
+
+        form_gen = QFormLayout()
+        form_gen.setSpacing(12)
+        form_gen.setLabelAlignment(Qt.AlignLeft)
+
         self.combo_lang = QComboBox()
         self.combo_lang.addItems(["TR (Türkçe)", "EN (English)", "DE (Deutsch)", "ES (Español)"])
-        row_lang.addWidget(self.combo_lang)
-        card_layout.addLayout(row_lang)
+        self.combo_lang.setFixedWidth(220)
+        form_gen.addRow("Arayüz Dili (Language):", self.combo_lang)
 
-        # Theme Selection
-        row_theme = QHBoxLayout()
-        row_theme.addWidget(QLabel("Tema (Theme Palette):"))
         self.combo_theme = QComboBox()
         self.combo_theme.addItems([
             "Cyber-Noir Dark",
@@ -50,12 +52,52 @@ class SettingsView(QWidget):
             "Tokyo Night",
             "Dracula Pro"
         ])
-        row_theme.addWidget(self.combo_theme)
-        card_layout.addLayout(row_theme)
+        self.combo_theme.setFixedWidth(220)
+        form_gen.addRow("Tema Paleti (Theme Palette):", self.combo_theme)
 
-        # AI Primary Provider Selection
-        row_ai_primary = QHBoxLayout()
-        row_ai_primary.addWidget(QLabel("Birincil AI Sağlayıcı (Primary AI):"))
+        slider_row = QHBoxLayout()
+        self.slider_interval = QSlider(Qt.Horizontal)
+        self.slider_interval.setRange(2, 30)
+        self.slider_interval.setValue(3)
+        self.slider_interval.setFixedWidth(160)
+        slider_row.addWidget(self.slider_interval)
+
+        self.lbl_interval_val = QLabel("3 Saniye")
+        self.lbl_interval_val.setStyleSheet("color: #00f2fe; font-weight: bold;")
+        self.slider_interval.valueChanged.connect(lambda v: self.lbl_interval_val.setText(f"{v} Saniye"))
+        slider_row.addWidget(self.lbl_interval_val)
+        slider_row.addStretch()
+
+        form_gen.addRow("Otomatik Yenileme Aralığı:", slider_row)
+        gen_layout.addLayout(form_gen)
+        layout.addWidget(card_general)
+
+        # Settings Card 2: AI & API Key Management
+        card_ai = QFrame()
+        card_ai.setProperty("class", "glass-panel")
+        card_ai.setStyleSheet("background-color: #0e131f; border: 1px solid #1a2336; border-radius: 12px; padding: 18px;")
+        ai_layout = QVBoxLayout(card_ai)
+        ai_layout.setSpacing(12)
+
+        header_ai = QHBoxLayout()
+        lbl_ai_title = QLabel("Yapay Zeka (AI) ve API Anahtarı Yönetimi")
+        lbl_ai_title.setStyleSheet("font-size: 14px; font-weight: bold; color: #38bdf8;")
+        header_ai.addWidget(lbl_ai_title)
+
+        header_ai.addStretch()
+
+        self.btn_toggle_keys = QPushButton(" Show / Hide Keys")
+        self.btn_toggle_keys.setIcon(IconManager.get_icon("eye", color="#38bdf8", size=14))
+        self.btn_toggle_keys.setIconSize(QSize(14, 14))
+        self.btn_toggle_keys.setProperty("class", "btn-secondary")
+        self.btn_toggle_keys.clicked.connect(self._toggle_keys_visibility)
+        header_ai.addWidget(self.btn_toggle_keys)
+
+        ai_layout.addLayout(header_ai)
+
+        form_ai = QFormLayout()
+        form_ai.setSpacing(10)
+
         self.combo_ai_primary = QComboBox()
         self.combo_ai_primary.addItems([
             "DeepSeek AI",
@@ -66,12 +108,9 @@ class SettingsView(QWidget):
             "Google Gemini",
             "Ollama Local"
         ])
-        row_ai_primary.addWidget(self.combo_ai_primary)
-        card_layout.addLayout(row_ai_primary)
+        self.combo_ai_primary.setFixedWidth(220)
+        form_ai.addRow("Birincil AI Sağlayıcı (Primary):", self.combo_ai_primary)
 
-        # AI Fallback Provider Selection
-        row_ai_fallback = QHBoxLayout()
-        row_ai_fallback.addWidget(QLabel("Yedek AI Sağlayıcı (Fallback AI):"))
         self.combo_ai_fallback = QComboBox()
         self.combo_ai_fallback.addItems([
             "Groq Cloud",
@@ -81,94 +120,47 @@ class SettingsView(QWidget):
             "Google Gemini",
             "Mistral AI"
         ])
-        row_ai_fallback.addWidget(self.combo_ai_fallback)
-        card_layout.addLayout(row_ai_fallback)
+        self.combo_ai_fallback.setFixedWidth(220)
+        form_ai.addRow("Yedek AI Sağlayıcı (Fallback):", self.combo_ai_fallback)
 
-        # Scan Interval Slider
-        row_interval = QHBoxLayout()
-        row_interval.addWidget(QLabel("Yenileme Aralığı (Saniye):"))
-        self.slider_interval = QSlider(Qt.Horizontal)
-        self.slider_interval.setRange(2, 30)
-        self.slider_interval.setValue(3)
-        self.slider_interval.setFixedWidth(160)
-        row_interval.addWidget(self.slider_interval)
-
-        self.lbl_interval_val = QLabel("3 Sn")
-        self.lbl_interval_val.setStyleSheet("color: #00f2fe; font-weight: bold;")
-        self.slider_interval.valueChanged.connect(lambda v: self.lbl_interval_val.setText(f"{v} Sn"))
-        row_interval.addWidget(self.lbl_interval_val)
-
-        card_layout.addLayout(row_interval)
-        layout.addWidget(card_settings)
-
-        # API Keys Management Panel
-        card_keys = QFrame()
-        card_keys.setProperty("class", "glass-panel")
-        card_keys.setStyleSheet("background-color: #0e131f; border: 1px solid #1a2336; border-radius: 12px; padding: 18px;")
-        keys_layout = QVBoxLayout(card_keys)
-        keys_layout.setSpacing(12)
-
-        lbl_keys_title = QHBoxLayout()
-        lbl_keys_header = QLabel("🔑 AI Servis API Anahtarları (API Key Management)")
-        lbl_keys_header.setStyleSheet("font-size: 15px; font-weight: bold; color: #38bdf8;")
-        lbl_keys_title.addWidget(lbl_keys_header)
-
-        lbl_keys_title.addStretch()
-
-        self.btn_toggle_keys = QPushButton(" Gözter/Gizle")
-        self.btn_toggle_keys.setIcon(IconManager.get_icon("eye", color="#38bdf8", size=14))
-        self.btn_toggle_keys.setIconSize(QSize(14, 14))
-        self.btn_toggle_keys.setProperty("class", "btn-secondary")
-        self.btn_toggle_keys.clicked.connect(self._toggle_keys_visibility)
-        lbl_keys_title.addWidget(self.btn_toggle_keys)
-
-        keys_layout.addLayout(lbl_keys_title)
-
-        # DeepSeek API Key
-        row_ds = QHBoxLayout()
-        row_ds.addWidget(QLabel("DeepSeek API Key:"))
         self.input_ds_key = QLineEdit()
         self.input_ds_key.setEchoMode(QLineEdit.Password)
         self.input_ds_key.setPlaceholderText("sk-...")
-        row_ds.addWidget(self.input_ds_key)
-        keys_layout.addLayout(row_ds)
+        self.input_ds_key.setMaximumWidth(380)
+        form_ai.addRow("DeepSeek API Key:", self.input_ds_key)
 
-        # Groq API Key
-        row_groq = QHBoxLayout()
-        row_groq.addWidget(QLabel("Groq Cloud API Key:"))
         self.input_groq_key = QLineEdit()
         self.input_groq_key.setEchoMode(QLineEdit.Password)
         self.input_groq_key.setPlaceholderText("gsk_...")
-        row_groq.addWidget(self.input_groq_key)
-        keys_layout.addLayout(row_groq)
+        self.input_groq_key.setMaximumWidth(380)
+        form_ai.addRow("Groq Cloud API Key:", self.input_groq_key)
 
-        # OpenAI API Key
-        row_oai = QHBoxLayout()
-        row_oai.addWidget(QLabel("OpenAI API Key:"))
         self.input_oai_key = QLineEdit()
         self.input_oai_key.setEchoMode(QLineEdit.Password)
         self.input_oai_key.setPlaceholderText("sk-proj-...")
-        row_oai.addWidget(self.input_oai_key)
-        keys_layout.addLayout(row_oai)
+        self.input_oai_key.setMaximumWidth(380)
+        form_ai.addRow("OpenAI API Key:", self.input_oai_key)
 
-        # Save Button
-        btn_save = QPushButton(" Ayarları & API Anahtarlarını Kaydet")
+        ai_layout.addLayout(form_ai)
+
+        btn_save = QPushButton(" Ayarları & API Anahtarlarını Güncelle")
         btn_save.setIcon(IconManager.get_icon("export", color="#ffffff", size=16))
         btn_save.setIconSize(QSize(16, 16))
         btn_save.setProperty("class", "btn-primary")
         btn_save.clicked.connect(self._save_settings)
-        keys_layout.addWidget(btn_save)
+        ai_layout.addWidget(btn_save)
 
-        layout.addWidget(card_keys)
+        layout.addWidget(card_ai)
 
-        # Developer Info Box (GitHub Link)
-        dev_box = QFrame()
-        dev_box.setProperty("class", "glass-panel")
-        dev_box.setStyleSheet("background-color: #0e131f; border: 1px solid #00f2fe; border-radius: 12px; padding: 16px;")
-        dev_layout = QVBoxLayout(dev_box)
+        # Settings Card 3: Developer & App Info
+        card_dev = QFrame()
+        card_dev.setProperty("class", "glass-panel")
+        card_dev.setStyleSheet("background-color: #0e131f; border: 1px solid #1a2336; border-radius: 12px; padding: 16px;")
+        dev_layout = QVBoxLayout(card_dev)
+        dev_layout.setSpacing(8)
 
-        lbl_dev_title = QLabel("Geliştirici ve Proje Künyesi")
-        lbl_dev_title.setStyleSheet("font-size: 15px; font-weight: bold; color: #00f2fe;")
+        lbl_dev_title = QLabel("Geliştirici ve Sistem Bilgileri")
+        lbl_dev_title.setStyleSheet("font-size: 14px; font-weight: bold; color: #4ade80;")
         dev_layout.addWidget(lbl_dev_title)
 
         lbl_dev_info = QLabel(
@@ -188,7 +180,8 @@ class SettingsView(QWidget):
         btn_github.clicked.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/MrSpy00")))
         dev_layout.addWidget(btn_github)
 
-        layout.addWidget(dev_box)
+        layout.addWidget(card_dev)
+        layout.addStretch()
 
         self._load_saved_keys()
 

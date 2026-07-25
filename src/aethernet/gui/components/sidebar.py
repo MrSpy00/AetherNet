@@ -20,43 +20,43 @@ class Sidebar(QFrame):
         self.section_labels = []
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 12, 10, 12)
-        layout.setSpacing(6)
+        layout.setContentsMargins(8, 12, 8, 12)
+        layout.setSpacing(4)
 
         # Header Row: Logo + Brand Title + Collapse Button
         self.header_frame = QFrame()
-        self.header_frame.setFixedHeight(44)
-        header_layout = QHBoxLayout(self.header_frame)
-        header_layout.setContentsMargins(2, 0, 2, 0)
-        header_layout.setSpacing(8)
+        self.header_frame.setFixedHeight(40)
+        self.header_layout = QHBoxLayout(self.header_frame)
+        self.header_layout.setContentsMargins(4, 0, 4, 0)
+        self.header_layout.setSpacing(6)
 
         # Rounded Logo Widget
         self.lbl_logo = QLabel()
-        self.lbl_logo.setFixedSize(30, 30)
+        self.lbl_logo.setFixedSize(28, 28)
         logo_path = get_asset_path("assets/logo.png")
         if not logo_path.exists():
             logo_path = get_asset_path("assets/icon.ico")
         
         if logo_path.exists():
-            pix = QPixmap(str(logo_path)).scaled(30, 30, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            rounded_pix = QPixmap(30, 30)
+            pix = QPixmap(str(logo_path)).scaled(28, 28, Qt.KeepAspectRatio, Qt.SmoothTransformation)
+            rounded_pix = QPixmap(28, 28)
             rounded_pix.fill(Qt.transparent)
             painter = QPainter(rounded_pix)
             painter.setRenderHint(QPainter.Antialiasing)
             path = QPainterPath()
-            path.addRoundedRect(0, 0, 30, 30, 8, 8)
+            path.addRoundedRect(0, 0, 28, 28, 7, 7)
             painter.setClipPath(path)
             painter.drawPixmap(0, 0, pix)
             painter.end()
             self.lbl_logo.setPixmap(rounded_pix)
 
-        header_layout.addWidget(self.lbl_logo)
+        self.header_layout.addWidget(self.lbl_logo)
 
         # Brand Title
         self.lbl_brand = QLabel("AetherNet")
         self.lbl_brand.setObjectName("SidebarHeader")
-        header_layout.addWidget(self.lbl_brand)
-        header_layout.addStretch()
+        self.header_layout.addWidget(self.lbl_brand)
+        self.header_layout.addStretch()
 
         # Collapse / Expand Button
         self.btn_collapse = QPushButton()
@@ -76,7 +76,7 @@ class Sidebar(QFrame):
             }
         """)
         self.btn_collapse.clicked.connect(self.toggle_collapse)
-        header_layout.addWidget(self.btn_collapse)
+        self.header_layout.addWidget(self.btn_collapse)
         layout.addWidget(self.header_frame)
 
         self.btn_group = QButtonGroup(self)
@@ -178,7 +178,8 @@ class Sidebar(QFrame):
         self.is_collapsed = not self.is_collapsed
         accent = ThemeManager.get_accent_color(self.current_theme)
         if self.is_collapsed:
-            self.setFixedWidth(70)
+            self.setFixedWidth(64)
+            self.lbl_logo.hide()
             self.lbl_brand.hide()
             self.btn_collapse.setIcon(IconManager.get_icon("chevron_right", color=accent, size=14))
             self.lbl_version.hide()
@@ -188,6 +189,7 @@ class Sidebar(QFrame):
                 btn.setText("")
         else:
             self.setFixedWidth(240)
+            self.lbl_logo.show()
             self.lbl_brand.show()
             self.btn_collapse.setIcon(IconManager.get_icon("chevron_left", color=accent, size=14))
             self.lbl_version.show()

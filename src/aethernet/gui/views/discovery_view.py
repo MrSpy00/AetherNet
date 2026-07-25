@@ -1,11 +1,12 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QLineEdit, QProgressBar, QSlider, QFrame
 )
-from PySide6.QtCore import Qt, QTimer
+from PySide6.QtCore import Qt, QTimer, QSize
 from aethernet.discovery.arp_discovery import ArpDiscovery
+from aethernet.gui.icon_manager import IconManager
 
 class DiscoveryView(QWidget):
-    """Local LAN Device Inventory & Discovery View"""
+    """Local LAN Device Inventory & Discovery View with Vector Icons"""
 
     def __init__(self, platform_adapter, i18n, parent=None):
         super().__init__(parent)
@@ -17,19 +18,21 @@ class DiscoveryView(QWidget):
         layout.setSpacing(16)
 
         header_layout = QHBoxLayout()
-        lbl_header = QLabel("💻 Yerel Ağ Cihaz Keşfi (ARP Envanteri)")
+        lbl_header = QLabel("Yerel Ağ Cihaz Keşfi (ARP Envanteri)")
         lbl_header.setStyleSheet("font-size: 20px; font-weight: bold; color: #f8fafc;")
         header_layout.addWidget(lbl_header)
 
         header_layout.addStretch()
 
         self.input_search = QLineEdit()
-        self.input_search.setPlaceholderText("🔎 Cihaz veya IP Ara...")
-        self.input_search.setFixedWidth(200)
+        self.input_search.setPlaceholderText(" Cihaz veya IP Ara...")
+        self.input_search.setFixedWidth(220)
         self.input_search.textChanged.connect(self._filter_table)
         header_layout.addWidget(self.input_search)
 
-        self.btn_scan = QPushButton("📡 Taramayı Başlat")
+        self.btn_scan = QPushButton(" Taramayı Başlat")
+        self.btn_scan.setIcon(IconManager.get_icon("search", color="#ffffff", size=16))
+        self.btn_scan.setIconSize(QSize(16, 16))
         self.btn_scan.setProperty("class", "btn-primary")
         self.btn_scan.clicked.connect(self.run_discovery)
         header_layout.addWidget(self.btn_scan)
@@ -76,7 +79,7 @@ class DiscoveryView(QWidget):
     def run_discovery(self):
         self.progress_bar.setValue(0)
         self.btn_scan.setEnabled(False)
-        self.btn_scan.setText("⏳ Taranıyor...")
+        self.btn_scan.setText(" Taranıyor...")
 
         # Animated progress bar tick
         self.progress_val = 0
@@ -91,7 +94,7 @@ class DiscoveryView(QWidget):
         if self.progress_val >= 100:
             self.timer.stop()
             self.btn_scan.setEnabled(True)
-            self.btn_scan.setText("📡 Taramayı Başlat")
+            self.btn_scan.setText(" Taramayı Başlat")
 
             devices = ArpDiscovery.get_arp_table()
             self.table.setRowCount(len(devices))
@@ -99,11 +102,21 @@ class DiscoveryView(QWidget):
             for idx, dev in enumerate(devices):
                 self.table.setItem(idx, 0, QTableWidgetItem(dev.ip))
                 self.table.setItem(idx, 1, QTableWidgetItem(dev.mac))
+                
                 vendor_text = dev.vendor or "Bilinmiyor"
-                self.table.setItem(idx, 2, QTableWidgetItem(f"🏢 {vendor_text}"))
-                self.table.setItem(idx, 3, QTableWidgetItem(f"📱 {dev.device_type}"))
-                status_item = QTableWidgetItem("🟢 Çevrimiçi" if dev.is_online else "🔴 Çevrimdışı")
-                self.table.setItem(idx, 4, status_item)
+                item_vendor = QTableWidgetItem(vendor_text)
+                item_vendor.setIcon(IconManager.get_icon("discovery", color="#38bdf8", size=16))
+                self.table.setItem(idx, 2, item_vendor)
+
+                item_type = QTableWidgetItem(dev.device_type)
+                item_type.setIcon(IconManager.get_icon("network", color="#00f2fe", size=16))
+                self.table.setItem(idx, 3, item_type)
+
+                status_str = "Çevrimiçi" if dev.is_online else "Çevrimdışı"
+                item_status = QTableWidgetItem(status_str)
+                color_hex = "#4ade80" if dev.is_online else "#ef4444"
+                item_status.setIcon(IconManager.get_icon("wifi", color=color_hex, size=16))
+                self.table.setItem(idx, 4, item_status)
 
     def _filter_table(self, query: str):
         query = query.lower()

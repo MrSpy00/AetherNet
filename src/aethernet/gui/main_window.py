@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QSystemTrayIcon, QMenu
 )
 from PySide6.QtCore import QTimer, Qt
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QGuiApplication
 
 from aethernet.platform import get_platform_adapter
 from aethernet.gui.theme_manager import ThemeManager
@@ -31,9 +31,15 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        # Window Title and Icon
+        # Window Title and Clean Initial Centered Geometry
         self.setWindowTitle("AetherNet - WiFi & Ağ Yönetim Hub'ı")
-        self.resize(1340, 850)
+        
+        screen_geo = QGuiApplication.primaryScreen().geometry()
+        w, h = 1280, 800
+        x = (screen_geo.width() - w) // 2
+        y = (screen_geo.height() - h) // 2
+        self.setGeometry(x, y, w, h)
+        self.setMinimumSize(1100, 700)
 
         # Set Window Icon
         icon_path = get_asset_path("assets/icon.ico")

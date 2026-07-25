@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTextEdit, QFrame, QProgressBar
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTextEdit, QFrame
 )
 from PySide6.QtCore import Qt, QSize
 from aethernet.security.security_scorer import SecurityScorer
@@ -77,13 +77,13 @@ class SecurityView(QWidget):
             output += f"Güvenlik Protokolü  : {conn.security_protocol} | Şifreleme: {conn.cipher}\n\n"
 
             if report.issues:
-                output += "⚠️ TESPİT EDİLEN GÜVENLİK RİSKLERİ:\n"
+                output += "[!] TESPİT EDİLEN GÜVENLİK RİSKLERİ:\n"
                 for issue in report.issues:
                     output += f" - {issue}\n"
                 output += "\n"
 
             if report.recommendations:
-                output += "💡 ÖNERİLEN DEFANSİF İYİLEŞTİRMELER:\n"
+                output += "[ÖNERİ] DEFANSİF İYİLEŞTİRMELER:\n"
                 for rec in report.recommendations:
                     output += f" - {rec}\n"
                 output += "\n"
@@ -97,10 +97,10 @@ class SecurityView(QWidget):
         if rogue_alerts:
             self.card_evil_twin.set_value("TEHDİT!", f"{len(rogue_alerts)} Şüpheli AP")
             for alert in rogue_alerts:
-                output += f"🔴 UYARI: {alert.description}\n"
+                output += f"[TEHDİT] UYARI: {alert.description}\n"
         else:
             self.card_evil_twin.set_value("TEMİZ", "Şüpheli AP Yok")
-            output += "🟢 Çevrenizde Sahte AP veya şüpheli çift SSID yayını tespit edilmedi.\n\n"
+            output += "[OK] Çevrenizde Sahte AP veya şüpheli çift SSID yayını tespit edilmedi.\n\n"
 
         # ARP Spoofing & MITM Guard Check
         arp_detector = ARPSpoofDetector()
@@ -109,10 +109,10 @@ class SecurityView(QWidget):
         if arp_res["is_spoofed"]:
             self.card_arp_spoof.set_value("RİSK!", "Çakışma Var")
             for alert in arp_res["alerts"]:
-                output += f"🔴 TEHDİT: {alert}\n"
+                output += f"[TEHDİT] {alert}\n"
         else:
             self.card_arp_spoof.set_value("GÜVENLİ", f"{arp_res['total_entries']} ARP Kaydı")
-            output += f"🟢 ARP Tablosu Güvenli ({arp_res['total_entries']} aktif ARP kaydı incelendi, şüpheli çakışma yok).\n\n"
+            output += f"[OK] ARP Tablosu Güvenli ({arp_res['total_entries']} aktif ARP kaydı incelendi, şüpheli çakışma yok).\n\n"
 
         # DNS Leak Check
         dns_checker = DNSLeakChecker()
@@ -121,8 +121,8 @@ class SecurityView(QWidget):
         output += f"Aktif DNS Sunucuları: {', '.join(dns_res['resolvers']) if dns_res['resolvers'] else 'Varsayılan Sistem DNS'}\n"
         if dns_res["has_leak"]:
             for alert in dns_res["alerts"]:
-                output += f"⚠️ {alert}\n"
+                output += f"[UYARI] {alert}\n"
         else:
-            output += "🟢 DNS Sızıntısı veya şüpheli yönlendirme tespit edilmedi.\n"
+            output += "[OK] DNS Sızıntısı veya şüpheli yönlendirme tespit edilmedi.\n"
 
         self.txt_sec_report.setText(output)
