@@ -63,10 +63,19 @@ class MacVendorResolver:
         "68:54:5A": "Amazon Technologies",
         "00:04:76": "3Com Corporation",
         "00:13:E8": "Intel Corporate",
-        "24:62:AB": "Espressif Inc. (ESP32/ESP8266 IoT)",
-        "30:AE:A4": "Espressif Inc. (ESP32/ESP8266 IoT)",
-        "10:52:1C": "Hikvision Digital Tech",
-        "BC:AD:28": "Dahua Technology"
+        "60:66:82": "TP-Link Corporation",
+        "C0:C9:E3": "TP-Link Corporation",
+        "00:11:32": "Synology Inc.",
+        "28:6B:35": "Apple Inc.",
+        "D4:6E:0E": "TP-Link Technologies",
+        "00:1F:D0": "GIGA-BYTE Technology",
+        "AC:84:C6": "TP-Link Technologies",
+        "04:42:1A": "Android / OEM Device",
+        "84:16:F9": "TP-Link Technologies",
+        "54:AF:97": "Shenzhen Bilian Electronic",
+        "78:8C:B5": "Ubiquiti Networks",
+        "DC:9B:9C": "Huawei Technologies",
+        "10:7B:44": "Xiaomi Communications"
     }
 
 
@@ -88,29 +97,33 @@ class MacVendorResolver:
             cls.CACHE[prefix] = vendor
             return vendor
 
-        # Step 3: Provider 1 - api.macvendors.com
-        try:
-            url = f"https://api.macvendors.com/{clean_mac}"
-            res = requests.get(url, timeout=2.0)
-            if res.status_code == 200 and res.text:
-                vendor = res.text.strip()
-                cls.CACHE[prefix] = vendor
-                return vendor
-        except Exception as e:
-            logger.debug(f"macvendors.com failed: {e}")
-
-        # Step 4: Provider 2 - maclookup.app API
+        # Step 3: Provider 1 - maclookup.app API (Faster & Higher Rate Limits)
         try:
             url = f"https://api.maclookup.app/v2/macs/{clean_mac}"
             res = requests.get(url, timeout=2.0)
             if res.status_code == 200:
                 data = res.json()
-                vendor = data.get("company", "")
-                if vendor:
-                    cls.CACHE[prefix] = vendor
-                    return vendor
+                if isinstance(data, dict):
+                    vendor = data.get("company", "")
+                    if vendor and isinstance(vendor, str):
+                        cls.CACHE[prefix] = vendor
+                        return vendor
         except Exception as e:
             logger.debug(f"maclookup.app failed: {e}")
+
+        # Step 4: Provider 2 - api.macvendors.com
+        try:
+            url = f"https://api.macvendors.com/{clean_mac}"
+            res = requests.get(url, timeout=2.0)
+            if res.status_code == 200 and res.text:
+                vendor = res.text.strip()
+                if vendor and isinstance(vendor, str):
+                    cls.CACHE[prefix] = vendor
+                    return vendor
+            elif res.status_code == 429:
+                logger.debug(f"macvendors.com rate-limited (429) for {clean_mac}")
+        except Exception as e:
+            logger.debug(f"macvendors.com failed: {e}")
 
         # Default fallback
         fallback_vendor = "Genel Ağ Cihazı"

@@ -57,8 +57,10 @@ class SimpleTTLCache:
 class APIHttpClient:
     """Robust, Rate-Limited, Cached HTTP client with automatic Retries & Fallback."""
 
-    def __init__(self, user_agent: str = "AetherNet-Hub/1.0", default_timeout: int = 8):
-        self.user_agent = user_agent
+    DEFAULT_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 AetherNet-Hub/1.0"
+
+    def __init__(self, user_agent: Optional[str] = None, default_timeout: int = 8):
+        self.user_agent = user_agent or self.DEFAULT_USER_AGENT
         self.default_timeout = default_timeout
         self.cache = SimpleTTLCache(default_ttl=600)
         self.rate_limiters: Dict[str, RateLimiter] = {}
@@ -101,7 +103,8 @@ class APIHttpClient:
 
         req_headers = {
             "User-Agent": self.user_agent,
-            "Accept": "application/json",
+            "Accept": "application/json, text/html, application/xhtml+xml, */*",
+            "Accept-Language": "en-US,en;q=0.9",
         }
         if headers:
             req_headers.update(headers)

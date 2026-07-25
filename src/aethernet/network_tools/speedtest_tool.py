@@ -47,7 +47,22 @@ class SpeedtestTool:
             
             logger.info("En yakın ve en hızlı Speedtest sunucuları aranıyor...")
             st.get_servers([])
-            best = st.get_best_server()
+            
+            best = None
+            try:
+                closest = st.get_closest_servers()
+                if isinstance(closest, list) and len(closest) > 0:
+                    valid_candidates = [s for s in closest[:10] if isinstance(s, dict)]
+                    if valid_candidates:
+                        best = st.get_best_server(valid_candidates)
+                        candidate_best = min(valid_candidates, key=lambda s: s.get("latency", 9999.0))
+                        if candidate_best.get("latency", 9999.0) < best.get("latency", 9999.0):
+                            best = candidate_best
+            except Exception as e:
+                logger.debug(f"Closest server latency sorting fallback: {e}")
+
+            if not best or not isinstance(best, dict):
+                best = st.get_best_server()
 
             sponsor = best.get("sponsor", "Otomatik Sunucu")
             city = best.get("name", "Bölgesel Node")

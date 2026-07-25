@@ -53,6 +53,9 @@ class ThreatIntelligenceEngine:
         data, status, _ = self.client.get_json(url, rate_limit_pm=60)
         if status == 200 and isinstance(data, dict):
             return data
+        elif status == 404:
+            logger.debug(f"Shodan InternetDB: IP {ip} veritabanında bulunamadı (temiz / kayıtsız IP).")
+            return {"ports": [], "vulns": [], "hostnames": [], "cpes": [], "tags": []}
         return None
 
     def _query_abuseipdb(self, ip: str) -> Optional[Dict[str, Any]]:
@@ -71,11 +74,19 @@ class ThreatIntelligenceEngine:
     def fetch_cisa_kev(self, limit: int = 50, keyword: Optional[str] = None) -> List[Dict[str, str]]:
         """Fetches and filters CISA Known Exploited Vulnerabilities (KEV) Catalog."""
         if self._cisa_kev_cache is None:
-            url = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json"
-            data, status, _ = self.client.get_json(url, use_cache=True, cache_ttl=3600, rate_limit_pm=10)
-            if status == 200 and data and "vulnerabilities" in data:
-                self._cisa_kev_cache = data["vulnerabilities"]
-            else:
+            # Primary CISA URL and Fallback GitHub Mirror URL
+            urls = [
+                "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json",
+                "https://raw.githubusercontent.com/cisagov/known-exploited-vulnerabilities-catalog/main/known_exploited_vulnerabilities.json"
+            ]
+            for url in urls:
+                data, status, _ = self.client.get_json(url, use_cache=True, cache_ttl=3600, rate_limit_pm=10)
+                if status == 200 and data and "vulnerabilities" in data:
+                    self._cisa_kev_cache = data["vulnerabilities"]
+                    logger.info(f"CISA KEV Kataloğu başarıyla indirildi ({len(self._cisa_kev_cache)} zafiyet).")
+                    break
+            
+            if self._cisa_kev_cache is None:
                 self._cisa_kev_cache = []
 
         vulnerabilities = self._cisa_kev_cache or []
