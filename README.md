@@ -2,7 +2,7 @@
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![PySide6](https://img.shields.io/badge/GUI-PySide6%20%28Qt6%29-green.svg)](https://pypi.org/project/PySide6/)
-[![Executable Size](https://img.shields.io/badge/Executable-48.2%20MB-cyan.svg)](dist/AetherNet.exe)
+[![Executable Size](https://img.shields.io/badge/Executable-54.7%20MB-cyan.svg)](dist/AetherNet.exe)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
 > **AetherNet**, kablosuz ağ adaptörlerinizi, aktif bağlantılarınızı, kayıtlı profillerinizi ve çevrenizdeki WiFi ortamını eksiksiz görüntüleyip yönetmenizi sağlayan; aynı zamanda gelişmiş ağ tanılamaları, yerel cihaz envanteri, harita & coğrafi konum istihbaratı, güvenlik/savunma analizleri, AI sağlayıcıları ve yetkilendirilmiş pentest araç entegrasyonlarını tek bir Cyber-Noir arayüzde birleştiren yüksek performanslı masaüstü ağ yönetim hub'ıdır.
