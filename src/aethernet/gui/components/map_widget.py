@@ -1,26 +1,119 @@
 import logging
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QFrame
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QFont
-
-try:
-    from PySide6.QtWebEngineWidgets import QWebEngineView
-    WEBENGINE_AVAILABLE = True
-except ImportError:
-    WEBENGINE_AVAILABLE = False
+import webbrowser
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QFrame
+from PySide6.QtCore import Qt, QRectF
+from PySide6.QtGui import QPainter, QColor, QPen, QBrush, QFont, QRadialGradient
 
 logger = logging.getLogger(__name__)
 
 
+class CyberMapCanvas(QWidget):
+    """High-Performance Native Cyber-Noir Geolocation & Radar Canvas."""
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.lat = 0.0
+        self.lon = 0.0
+        self.ip = ""
+        self.city = ""
+        self.country = ""
+        self.isp = ""
+        self.setMinimumHeight(240)
+
+    def set_location(self, lat: float, lon: float, ip: str, city: str, country: str, isp: str):
+        self.lat = lat
+        self.lon = lon
+        self.ip = ip
+        self.city = city
+        self.country = country
+        self.isp = isp
+        self.update()
+
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.Antialiasing)
+
+        w = self.width()
+        h = self.height()
+
+        # Background
+        painter.fillRect(0, 0, w, h, QColor(9, 5, 20))
+
+        # Cyber Grid Lines
+        pen_grid = QPen(QColor(30, 27, 75, 120), 1, Qt.DashLine)
+        painter.setPen(pen_grid)
+        grid_size = 40
+        for x in range(0, w, grid_size):
+            painter.drawLine(x, 0, x, h)
+        for y in range(0, h, grid_size):
+            painter.drawLine(0, y, w, y)
+
+        # Concentric Radar Circles in Center
+        cx, cy = w // 2, h // 2
+        pen_radar = QPen(QColor(124, 58, 237, 40), 1)
+        painter.setPen(pen_radar)
+        for r in range(40, max(w, h) // 2, 40):
+            painter.drawEllipse(cx - r, cy - r, r * 2, r * 2)
+
+        if self.lat == 0.0 and self.lon == 0.0:
+            # Standby state
+            painter.setPen(QColor(168, 85, 247, 200))
+            painter.setFont(QFont("Segoe UI", 11, QFont.Bold))
+            painter.drawText(QRectF(0, 0, w, h), Qt.AlignCenter, "📍 SİBER COĞRAFİ KONUM VE RADAR MODÜLÜ HAZIR\nIP sorgulaması bekleniyor...")
+            return
+
+        # Target pulse pin position based on lat/lon projection onto grid
+        # Map lat (-90..90) and lon (-180..180) to canvas offsets relative to center
+        px = int(cx + (self.lon / 180.0) * (w / 2.5))
+        py = int(cy - (self.lat / 90.0) * (h / 2.5))
+        px = max(40, min(w - 40, px))
+        py = max(40, min(h - 40, py))
+
+        # Target Pulse Glow
+        gradient = QRadialGradient(px, py, 40)
+        gradient.setColorAt(0.0, QColor(0, 242, 254, 180))
+        gradient.setColorAt(0.5, QColor(124, 58, 237, 80))
+        gradient.setColorAt(1.0, QColor(9, 5, 20, 0))
+        painter.setBrush(QBrush(gradient))
+        painter.setPen(Qt.NoPen)
+        painter.drawEllipse(px - 40, py - 40, 80, 80)
+
+        # Target Crosshair Lines
+        pen_target = QPen(QColor(0, 242, 254, 200), 1, Qt.SolidLine)
+        painter.setPen(pen_target)
+        painter.drawLine(px - 20, py, px + 20, py)
+        painter.drawLine(px, py - 20, px, py + 20)
+        painter.drawEllipse(px - 8, py - 8, 16, 16)
+
+        # Center Red Hotspot
+        painter.setBrush(QColor(239, 68, 68))
+        painter.setPen(QPen(QColor(255, 255, 255), 1.5))
+        painter.drawEllipse(px - 4, py - 4, 8, 8)
+
+        # Telemetry Banner Overlay (Top Left)
+        painter.setBrush(QColor(13, 8, 26, 220))
+        painter.setPen(QPen(QColor(124, 58, 237), 1))
+        painter.drawRoundedRect(12, 12, 340, 76, 8, 8)
+
+        painter.setPen(QColor(0, 242, 254))
+        painter.setFont(QFont("Segoe UI", 10, QFont.Bold))
+        painter.drawText(24, 34, f"TARGET IP: {self.ip}")
+
+        painter.setPen(QColor(248, 250, 252))
+        painter.setFont(QFont("Segoe UI", 9))
+        painter.drawText(24, 54, f"Konum: {self.city}, {self.country} ({self.lat:.4f}, {self.lon:.4f})")
+        painter.drawText(24, 72, f"ISP: {self.isp}")
+
+
 class MapViewerWidget(QFrame):
-    """Interactive Dark-Mode OpenStreetMap Geolocation Visualizer Widget."""
+    """High-Performance Cyber-Noir Geolocation Map Widget."""
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setMinimumHeight(280)
         self.setStyleSheet("""
             QFrame {
-                background-color: #030712;
+                background-color: #090514;
                 border: 1px solid #7c3aed;
                 border-radius: 10px;
             }
@@ -29,77 +122,51 @@ class MapViewerWidget(QFrame):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
 
-        if WEBENGINE_AVAILABLE:
-            self.web_view = QWebEngineView()
-            self.web_view.setStyleSheet("border: none; border-radius: 8px;")
-            layout.addWidget(self.web_view)
-            self._render_blank_map()
-        else:
-            self.fallback_label = QLabel("Harita görselleştirme için QWebEngine Yüklenemedi.")
-            self.fallback_label.setAlignment(Qt.AlignCenter)
-            self.fallback_label.setFont(QFont("Segoe UI", 12))
-            self.fallback_label.setStyleSheet("color: #a855f7;")
-            layout.addWidget(self.fallback_label)
+        # Canvas
+        self.canvas = CyberMapCanvas()
+        layout.addWidget(self.canvas)
 
-    def _render_blank_map(self):
-        html = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <style>
-                body { background-color: #030712; color: #a855f7; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-                .box { text-align: center; border: 1px dashed #7c3aed; padding: 20px; border-radius: 10px; }
-            </style>
-        </head>
-        <body>
-            <div class="box">
-                <h3>📍 Coğrafi Konum Haritası Hazır</h3>
-                <p>IP sorgulaması yapıldığında harita konumu otomatik olarak güncellenecektir.</p>
-            </div>
-        </body>
-        </html>
-        """
-        self.web_view.setHtml(html)
+        # Bottom Bar
+        bottom_bar = QHBoxLayout()
+        bottom_bar.setContentsMargins(8, 2, 8, 6)
+
+        self.status_label = QLabel("📍 Coğrafi Konum Modülü Aktif")
+        self.status_label.setStyleSheet("color: #94a3b8; font-size: 12px;")
+        bottom_bar.addWidget(self.status_label)
+
+        bottom_bar.addStretch()
+
+        self.btn_open_external = QPushButton("🌍 OpenStreetMap'te Aç")
+        self.btn_open_external.setCursor(Qt.PointingHandCursor)
+        self.btn_open_external.setStyleSheet("""
+            QPushButton {
+                background-color: #1e1b4b;
+                color: #a855f7;
+                border: 1px solid #7c3aed;
+                border-radius: 6px;
+                padding: 4px 12px;
+                font-weight: bold;
+                font-size: 11px;
+            }
+            QPushButton:hover {
+                background-color: #7c3aed;
+                color: #ffffff;
+            }
+        """)
+        self.btn_open_external.clicked.connect(self._open_in_browser)
+        bottom_bar.addWidget(self.btn_open_external)
+
+        layout.addLayout(bottom_bar)
+
+    def _open_in_browser(self):
+        if self.canvas.lat != 0.0 or self.canvas.lon != 0.0:
+            url = f"https://www.openstreetmap.org/?mlat={self.canvas.lat}&mlon={self.canvas.lon}#map=12/{self.canvas.lat}/{self.canvas.lon}"
+            webbrowser.open(url)
 
     def update_location(self, lat: float, lon: float, ip: str, city: str, country: str, isp: str):
-        """Loads Leaflet OpenStreetMap view pinned at the specified lat/lon."""
-        if not WEBENGINE_AVAILABLE:
-            if hasattr(self, 'fallback_label'):
-                self.fallback_label.setText(f"📍 Konum: {city}, {country} ({lat}, {lon}) | IP: {ip} | ISP: {isp}")
-            return
-
-        if lat == 0.0 and lon == 0.0:
-            self._render_blank_map()
-            return
-
-        leaflet_html = f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="utf-8" />
-            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-            <style>
-                html, body, #map {{ height: 100%; width: 100%; margin: 0; padding: 0; background-color: #090514; }}
-                .leaflet-popup-content-wrapper {{ background: #0d081a; color: #f8fafc; border: 1px solid #7c3aed; border-radius: 8px; font-family: sans-serif; }}
-                .leaflet-popup-tip {{ background: #0d081a; }}
-                .dark-tile {{ filter: brightness(0.7) invert(1) contrast(1.3) hue-rotate(200deg); }}
-            </style>
-        </head>
-        <body>
-            <div id="map"></div>
-            <script>
-                var map = L.map('map').setView([{lat}, {lon}], 10);
-                L.tileLayer('https://{{s}}.tile.openstreetmap.org/{{z}}/{{x}}/{{y}}.png', {{
-                    maxZoom: 19,
-                    className: 'dark-tile',
-                    attribution: '© OpenStreetMap contributors'
-                }}).addTo(map);
-
-                var marker = L.marker([{lat}, {lon}]).addTo(map);
-                marker.bindPopup("<b>IP: {ip}</b><br/><b>Konum:</b> {city}, {country}<br/><b>ISP:</b> {isp}<br/><b>Koordinat:</b> {lat}, {lon}").openPopup();
-            </script>
-        </body>
-        </html>
-        """
-        self.web_view.setHtml(leaflet_html)
+        """Updates geolocation map canvas with given IP details."""
+        self.canvas.set_location(lat, lon, ip, city, country, isp)
+        if lat != 0.0 or lon != 0.0:
+            self.status_label.setText(f"📍 Konum Tespit Edildi: {city}, {country} ({lat:.4f}, {lon:.4f})")
+        else:
+            self.status_label.setText("📍 Coğrafi Konum Modülü Aktif")
