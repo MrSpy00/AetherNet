@@ -1,8 +1,10 @@
 import dns.resolver
 import dns.reversename
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from loguru import logger
+
+
 
 @dataclass
 class DnsRecord:

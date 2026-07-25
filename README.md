@@ -10,7 +10,18 @@
 
 ## 🇹🇷 Türkçe Dokümantasyon
 
+### 📸 Ekran Görüntüleri (UI Previews)
+
+| Kontrol Paneli (Dashboard) | WiFi Adaptör & Bağlantı |
+| :---: | :---: |
+| ![Dashboard TR](assets/screenshots/dashboard_tr.png) | ![WiFi TR](assets/screenshots/wifi_tr.png) |
+
+| Ağ Tanılama Araçları | Güvenlik & Savunma Analizi |
+| :---: | :---: |
+| ![Tools TR](assets/screenshots/tools_tr.png) | ![Security TR](assets/screenshots/security_tr.png) |
+
 ### 📋 İçindekiler
+
 1. [Proje Vizyonu](#-proje-vizyonu)
 2. [Modül ve Özellik Detayları](#-mod%C3%BCl-ve-%C3%B6zellik-detaylar%C4%B1)
 3. [Proje Mimarisi ve Klasör Yapısı](#-proje-mimarisi-ve-klas%C3%B6r-yap%C4%B1s%C4%B1)
@@ -163,7 +174,18 @@ Bu proje **[MrSpy00](https://github.com/MrSpy00)** tarafından geliştirilmişti
 
 ## 🇬🇧 English Documentation
 
+### 📸 User Interface Previews
+
+| Dashboard Overview | WiFi Adapter & Connection |
+| :---: | :---: |
+| ![Dashboard EN](assets/screenshots/dashboard_en.png) | ![WiFi EN](assets/screenshots/wifi_en.png) |
+
+| Network Diagnostics Suite | Security & Defense Analysis |
+| :---: | :---: |
+| ![Tools EN](assets/screenshots/tools_en.png) | ![Security EN](assets/screenshots/security_en.png) |
+
 ### 📋 Table of Contents
+
 1. [Project Vision](#-project-vision-1)
 2. [Modules and Feature Details](#-modules-and-feature-details-1)
 3. [Project Architecture and Directory Structure](#-project-architecture-and-directory-structure-1)

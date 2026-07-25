@@ -24,8 +24,17 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+        # Window Title and Icon
         self.setWindowTitle("AetherNet - WiFi & Ağ Yönetim Hub'ı")
         self.resize(1280, 800)
+
+        # Set Window Icon
+        icon_path = Path("assets/icon.ico")
+        if not icon_path.exists():
+            icon_path = Path("assets/logo.png")
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
+
 
         # Platform adapter & i18n
         self.platform_adapter = get_platform_adapter()
