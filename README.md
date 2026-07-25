@@ -2,9 +2,10 @@
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-blue.svg)](https://www.python.org/)
 [![PySide6](https://img.shields.io/badge/GUI-PySide6%20%28Qt6%29-green.svg)](https://pypi.org/project/PySide6/)
+[![Executable Size](https://img.shields.io/badge/Executable-48.2%20MB-cyan.svg)](dist/AetherNet.exe)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
-> **AetherNet**, kablosuz ağ adaptörlerinizi, aktif bağlantılarınızı, kayıtlı profillerinizi ve çevrenizdeki WiFi ortamını eksiksiz görüntüleyip yönetmenizi sağlayan; aynı zamanda gelişmiş ağ tanılamaları, yerel cihaz envanteri, güvenlik/savunma analizleri, AI sağlayıcıları ve yetkilendirilmiş pentest araç entegrasyonlarını tek bir Cyber-Noir arayüzde birleştiren masaüstü ağ yönetim hub'ıdır.
+> **AetherNet**, kablosuz ağ adaptörlerinizi, aktif bağlantılarınızı, kayıtlı profillerinizi ve çevrenizdeki WiFi ortamını eksiksiz görüntüleyip yönetmenizi sağlayan; aynı zamanda gelişmiş ağ tanılamaları, yerel cihaz envanteri, harita & coğrafi konum istihbaratı, güvenlik/savunma analizleri, AI sağlayıcıları ve yetkilendirilmiş pentest araç entegrasyonlarını tek bir Cyber-Noir arayüzde birleştiren yüksek performanslı masaüstü ağ yönetim hub'ıdır.
 
 ---
 
@@ -19,6 +20,12 @@
 | Ağ Tanılama Araçları | Güvenlik & Savunma Analizi |
 | :---: | :---: |
 | ![Tools TR](assets/screenshots/tools_tr.png) | ![Security TR](assets/screenshots/security_tr.png) |
+
+| API Hub & Coğrafi Konum Haritası | Certified Pentest Orchestrator |
+| :---: | :---: |
+| ![API Hub TR](assets/screenshots/api_hub_tr.png) | ![Pentest TR](assets/screenshots/pentest_tr.png) |
+
+---
 
 ### 📋 İçindekiler
 
@@ -46,7 +53,7 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 
 #### 2. 🔑 Kayıtlı WiFi Profilleri Yönetimi
 - **Profil Listesi**: Sistemde kayıtlı tüm WiFi ağlarının ve güvenlik tiplerinin listelenmesi.
-- **Parola Görüntüleme**: Yerel makinede kayıtlı ağ şifrelerinin yönetici izniyle güvenli şekilde görüntülenmesi.
+- **Parola Görüntüleme**: Yerel makinede kayıtlı ağ şifrelerinin yönetici izniyle güvenli şekilde görüntülenmesi ve ThreadPoolExecutor yüksek hızlı kurtarma.
 - **Profil Kontrolü**: Ağ bağlantısını tetikleme veya mevcut bağlantıyı kesme.
 
 #### 3. 🔍 Çevresel Ağ & Ortam Taraması
@@ -64,7 +71,7 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 - **🔎 WHOIS & RDAP**: Alan adı kayıt süreleri, registrar ve kamuya açık IP coğrafi konum/ASN bilgileri.
 - **🔌 TCP Port Tarayıcı**: Yaygın ve özel portlar için çok izlekli (multithreaded) bağlantı testi.
 - **🔒 SSL/TLS Denetleyici**: Sertifika geçerliliği, bitiş tarihi, son gün sayısı, TLS versiyonu ve cipher paketleri.
-- **🚀 Bandwidth Speedtest**: İndirme, yükleme ve ping hızı ölçümü.
+- **🚀 Bandwidth Speedtest**: İndirme, yükleme ve ping hızı ölçümü (En yakın düşük gecikmeli sunucu düğümü seçimi ile).
 
 #### 6. 🛡️ Güvenlik & Savunma Modülleri
 - **Ağ Güvenlik Skoru**: Şifreleme standartları, açık ağ riski ve WPS durumuna göre 0-100 arası güvenlik skoru.
@@ -79,14 +86,15 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 - **Audit Logging**: Tüm tarama eylemlerinin zaman damgalı olarak `logs/audit.jsonl` dosyasına kaydedilmesi.
 
 #### 9. 🌐 External API & Tehdit İstihbaratı Hub'ı
-- **📍 IP Coğrafi Konum & Ağ İstihbaratı**: IP-API, IPify, DB-IP ve IP2Location sağlayıcıları üzerinden otomatik düşüşlü IP, ISP, ASN, coğrafi konum ve Proxy/VPN tespiti.
+- **📍 IP Coğrafi Konum & Siber Radar**: Yerel CyberMapCanvas ile hedefin enlem, boylam, hedef pingleme, radar taraması, şehir, ülke ve ISP haritası. İstenildiğinde canlı OpenStreetMap bağlantısı.
 - **🛡️ Shodan & CISA KEV Tehdit İstihbaratı**: Kamusal Shodan InternetDB API ile IP açık port ve CVE zafiyet tespiti, ABD CISA Known Exploited Vulnerabilities canlı kataloğu.
 - **🔒 Şifreli DNS-over-HTTPS (DoH)**: Cloudflare, Google ve Quad9 üzerinden DNS-over-HTTPS şifreli sorgu testi ve Quad9 zararlı engelleme analizi.
-- **🌐 Kamusal API Explorer**: `public-apis/public-apis`, `freeapi.app` ve `freepublicapis.com` derlemesi 100+ kategorize edilmiş kamusal API dizini ve canlı arama.
+- **🌐 Kamusal API Explorer**: 100+ kategorize edilmiş kamusal API dizini ve canlı arama.
 
 #### 10. 🎨 PySide6 GUI & UX
-- **Cyber-Noir Dark Tema**: Neon vurgulara sahip modern QSS arayüz tasarımı.
+- **Cyber-Noir Dark & Aegis Violet Tema**: Neon vurgulara sahip modern QSS arayüz tasarımı.
 - **Çoklu Dil (i18n)**: Türkçe (Varsayılan), İngilizce, Almanca ve İspanyolca dil desteği.
+- **Yüksek Performans & Ultra Küçük Boyut**: Optimizasyonlu derleme ile yalnızca **48.2 MB** `.exe` boyutu.
 
 ---
 
@@ -96,9 +104,14 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 AetherNet/
 ├── .env.example              # Örnek çevre değişkenleri dosyası
 ├── .gitignore                # Güvenli .gitignore yapılandırması
+├── AetherNet.spec            # PyInstaller optimizesi ve binary filtreleme spec dosyası
+├── build.bat                 # Otomatik tam temiz ve optimized derleme betiği
 ├── LICENSE                   # MIT Lisans belgesi
 ├── pyproject.toml            # Proje bağımlılıkları ve pytest ayarları
 ├── README.md                 # Çift dilli proje dokümantasyonu
+├── assets/
+│   ├── icon.ico              # Uygulama simgesi
+│   └── screenshots/          # TR & EN arayüz ekran görüntüleri
 ├── config/
 │   └── config.default.yaml   # Varsayılan konfigürasyon dosyası
 ├── src/
@@ -106,6 +119,7 @@ AetherNet/
 │       ├── __init__.py
 │       ├── main.py           # Uygulama giriş noktası
 │       ├── ai/               # Groq, Mistral, DeepSeek AI sağlayıcıları
+│       ├── api_hub/          # Shodan, DoH, IP Intel & CISA KEV motorları
 │       ├── core/             # Veri modelleri (models.py)
 │       ├── network_tools/    # Ping, DNS, WHOIS, PortScanner, Speedtest, SSL
 │       ├── discovery/        # ARP Discovery & MAC Vendor OUI resolver
@@ -114,9 +128,10 @@ AetherNet/
 │       ├── gui/              # PySide6 Arayüzü (ThemeManager, i18n, Views, Components)
 │       ├── platform/         # OS Soyutlama katmanı (windows.py)
 │       └── utils/            # Logger (loguru) & ConfigLoader
-├── tests/                    # Birim testleri
+├── tests/                    # Birim testleri (37/37 geçiyor)
 └── scripts/
-    └── build_exe.py          # PyInstaller derleme betiği
+    ├── build_exe.py          # PyInstaller spec tabanlı derleyici
+    └── capture_ui_screenshots.py # Otomatik ekran görüntüsü yakalayıcı
 ```
 
 ---
@@ -161,6 +176,11 @@ python src/aethernet/main.py
 pytest
 ```
 
+6. Optimized Executable (.exe) Derleyin (Çıktı: `dist/AetherNet.exe` - **48.2 MB**):
+```bash
+build.bat
+```
+
 ---
 
 ### 🔒 Güvenlik, Gizlilik ve Etik Onay
@@ -190,6 +210,12 @@ Bu proje **[MrSpy00](https://github.com/MrSpy00)** tarafından geliştirilmişti
 | :---: | :---: |
 | ![Tools EN](assets/screenshots/tools_en.png) | ![Security EN](assets/screenshots/security_en.png) |
 
+| API Hub & Geolocation Cyber Radar | Certified Pentest Orchestrator |
+| :---: | :---: |
+| ![API Hub EN](assets/screenshots/api_hub_en.png) | ![Pentest EN](assets/screenshots/pentest_en.png) |
+
+---
+
 ### 📋 Table of Contents
 
 1. [Project Vision](#-project-vision-1)
@@ -197,7 +223,7 @@ Bu proje **[MrSpy00](https://github.com/MrSpy00)** tarafından geliştirilmişti
 3. [Project Architecture and Directory Structure](#-project-architecture-and-directory-structure-1)
 4. [System Requirements and Installation](#-system-requirements-and-installation-1)
 5. [Security, Privacy and Ethical Compliance](#-security-privacy-and-ethical-compliance-1)
-6. [Developer & License](#-developer--license)
+6. [Developer & License](#-developer--license-1)
 
 ---
 
@@ -216,7 +242,7 @@ AetherNet is an all-in-one desktop network management hub designed to provide im
 
 #### 2. 🔑 Saved WiFi Profiles Management
 - **Profile Manager**: List saved WiFi profiles and security configurations.
-- **Password Revealer**: Securely view saved network passwords with administrative privileges.
+- **Password Revealer**: Securely view saved network passwords with administrative privileges using high-speed ThreadPoolExecutor loading.
 
 #### 3. 🔍 Wireless Environment & Congestion Scanner
 - **Live Environment Scanner**: List visible and hidden SSIDs/BSSIDs in the vicinity.
@@ -232,7 +258,7 @@ AetherNet is an all-in-one desktop network management hub designed to provide im
 - **🔎 WHOIS & RDAP**: Domain registration dates, registrar details, and IP geolocation/ASN data.
 - **🔌 TCP Port Scanner**: Multi-threaded TCP connect port scanner.
 - **🔒 SSL/TLS Inspector**: Audit SSL/TLS certificate validity, expiration dates, protocol versions, and ciphers.
-- **🚀 Bandwidth Speedtest**: Download, upload, and ping speed measurements.
+- **🚀 Bandwidth Speedtest**: Download, upload, and ping speed measurements with auto-selected lowest latency node.
 
 #### 6. 🛡️ Security & Defense Modules
 - **Security Scorer**: Calculate a 0-100 security score based on encryption strength and WPS status.
@@ -246,9 +272,16 @@ AetherNet is an all-in-one desktop network management hub designed to provide im
 - **Tool Orchestration**: Subprocess orchestration layer for Nmap and Tshark.
 - **Audit Logging**: Time-stamped JSONL audit trail recorded in `logs/audit.jsonl`.
 
-#### 9. 🎨 PySide6 GUI & UX
-- **Cyber-Noir Dark Theme**: Sleek QSS desktop user interface featuring neon cyan accents.
+#### 9. 🌐 External API & Threat Intelligence Hub
+- **📍 Geolocation Radar & Cyber Map Canvas**: Native PySide6 CyberMapCanvas displaying target coordinates, radar pulse pin, city, country, ISP, and optional live OpenStreetMap link.
+- **🛡️ Shodan & CISA KEV Intel**: Threat intelligence engine querying Shodan InternetDB and US CISA Known Exploited Vulnerabilities catalog.
+- **🔒 Encrypted DNS-over-HTTPS (DoH)**: Encrypted DoH testing via Cloudflare, Google, and Quad9.
+- **🌐 Public API Catalog**: 100+ categorized public APIs explorer.
+
+#### 10. 🎨 PySide6 GUI & UX
+- **Cyber-Noir Dark & Aegis Violet Themes**: Sleek QSS desktop user interface featuring neon cyan/purple accents.
 - **Multilingual Support (i18n)**: Native support for Turkish (Default), English, German, and Spanish.
+- **Ultra Compact Standalone Executable**: High-efficiency build resulting in a single **48.2 MB** binary (`dist/AetherNet.exe`).
 
 ---
 
@@ -258,9 +291,14 @@ AetherNet is an all-in-one desktop network management hub designed to provide im
 AetherNet/
 ├── .env.example              # Sample environment variables file
 ├── .gitignore                # Secure gitignore configuration
+├── AetherNet.spec            # PyInstaller spec file with binary filters
+├── build.bat                 # Automated clean build script
 ├── LICENSE                   # MIT License file
 ├── pyproject.toml            # Project dependencies and pytest config
 ├── README.md                 # Bilingual documentation
+├── assets/
+│   ├── icon.ico              # Application icon
+│   └── screenshots/          # TR & EN interface previews
 ├── config/
 │   └── config.default.yaml   # Default configuration file
 ├── src/
@@ -268,6 +306,7 @@ AetherNet/
 │       ├── __init__.py
 │       ├── main.py           # Application entry point
 │       ├── ai/               # Groq, Mistral, DeepSeek AI providers
+│       ├── api_hub/          # Shodan, DoH, IP Intel & CISA KEV engines
 │       ├── core/             # Data models (models.py)
 │       ├── network_tools/    # Ping, DNS, WHOIS, PortScanner, Speedtest, SSL
 │       ├── discovery/        # ARP Discovery & MAC Vendor OUI resolver
@@ -276,9 +315,10 @@ AetherNet/
 │       ├── gui/              # PySide6 GUI (ThemeManager, i18n, Views, Components)
 │       ├── platform/         # OS Abstraction layer (windows.py)
 │       └── utils/            # Logger (loguru) & ConfigLoader
-├── tests/                    # Unit tests
+├── tests/                    # Unit tests (37/37 passing)
 └── scripts/
-    └── build_exe.py          # PyInstaller build script
+    ├── build_exe.py          # PyInstaller spec-based builder
+    └── capture_ui_screenshots.py # Automated UI screenshot generator
 ```
 
 ---
@@ -321,6 +361,11 @@ python src/aethernet/main.py
 5. Run unit tests:
 ```bash
 pytest
+```
+
+6. Build Optimized Standalone Executable (Output: `dist/AetherNet.exe` - **48.2 MB**):
+```bash
+build.bat
 ```
 
 ---
