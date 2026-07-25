@@ -54,7 +54,7 @@ class MainWindow(QMainWindow):
         self.i18n = I18nManager("tr")
 
         # Apply Initial Theme
-        self.current_theme = "cyber_dark"
+        self.current_theme = "aegis_violet"
         self.setStyleSheet(ThemeManager.get_theme_stylesheet(self.current_theme))
 
         # Central Root Layout
@@ -95,13 +95,14 @@ class MainWindow(QMainWindow):
         self.view_wifi = WifiView(self.platform_adapter, self.i18n)
         self.view_profiles = ProfilesView(self.platform_adapter, self.i18n)
         self.view_env = EnvironmentView(self.platform_adapter, self.i18n)
-        self.view_discovery = DiscoveryView(self.platform_adapter, self.i18n)
+        self.view_discovery = DiscoveryView(self.i18n)
         self.view_tools = ToolsView(self.platform_adapter, self.i18n)
         self.view_security = SecurityView(self.platform_adapter, self.i18n)
         self.view_pentest = PentestView(self.platform_adapter, self.i18n)
         self.view_topology = TopologyView(self.platform_adapter, self.i18n)
         self.view_router = RouterView(self.platform_adapter, self.i18n)
         self.view_settings = SettingsView(self.i18n)
+        self.view_settings.theme_changed.connect(self._on_theme_changed)
         self.view_logs = LogsView(self.i18n)
         self.view_api_hub = APIHubView(self.platform_adapter, self.i18n)
 
@@ -140,7 +141,6 @@ class MainWindow(QMainWindow):
         super().closeEvent(event)
 
     def _on_navigation(self, index: int):
-
         if index in self.view_map:
             widget = self.view_map[index]
             stacked_idx = self.stacked_widget.indexOf(widget)
@@ -148,10 +148,12 @@ class MainWindow(QMainWindow):
                 self.stacked_widget.setCurrentIndex(stacked_idx)
 
     def _on_theme_changed(self, theme_name: str):
-        self.current_theme = theme_name
-        self.setStyleSheet(ThemeManager.get_theme_stylesheet(theme_name))
-        self.sidebar.update_theme(theme_name)
-        self.top_bar.update_theme(theme_name)
+        key = ThemeManager.normalize_theme_key(theme_name)
+        self.current_theme = key
+        self.setStyleSheet(ThemeManager.get_theme_stylesheet(key))
+        self.sidebar.update_theme(key)
+        self.top_bar.update_theme(key)
+        self.view_settings.update_theme(key)
 
     def _on_timer_tick(self):
         # Refresh dashboard live metrics

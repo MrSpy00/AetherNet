@@ -1,13 +1,17 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QSlider, QPushButton, QMessageBox, QFrame, QLineEdit, QFormLayout, QScrollArea
 )
-from PySide6.QtCore import Qt, QUrl, QSize
+from PySide6.QtCore import Qt, QUrl, QSize, Signal
 from PySide6.QtGui import QDesktopServices
 from aethernet.utils.config_loader import ConfigManager
 from aethernet.gui.icon_manager import IconManager
+from aethernet.gui.theme_manager import ThemeManager
 
 class SettingsView(QWidget):
     """Application Settings, API Key Management & Developer Profile View"""
+
+    theme_changed = Signal(str)
+    language_changed = Signal(str)
 
     def __init__(self, i18n, parent=None):
         super().__init__(parent)
@@ -52,6 +56,7 @@ class SettingsView(QWidget):
         self.combo_lang.addItems(["TR (Türkçe)", "EN (English)", "DE (Deutsch)", "ES (Español)"])
         self.combo_lang.setMinimumWidth(260)
         self.combo_lang.setStyleSheet("padding: 6px; background-color: #1a102b; color: white; border: 1px solid #331f54; border-radius: 6px;")
+        self.combo_lang.currentTextChanged.connect(self._on_lang_combo_changed)
         form_gen.addRow("Arayüz Dili (Language):", self.combo_lang)
 
         self.combo_theme = QComboBox()
@@ -66,6 +71,7 @@ class SettingsView(QWidget):
         ])
         self.combo_theme.setMinimumWidth(260)
         self.combo_theme.setStyleSheet("padding: 6px; background-color: #1a102b; color: white; border: 1px solid #331f54; border-radius: 6px;")
+        self.combo_theme.currentTextChanged.connect(self._on_theme_combo_changed)
         form_gen.addRow("Tema Paleti (Theme Palette):", self.combo_theme)
 
         slider_row = QHBoxLayout()
@@ -210,3 +216,21 @@ class SettingsView(QWidget):
         self.config_mgr.set("ai.openai.api_key", self.input_oai_key.text().strip())
         self.config_mgr.save_config()
         QMessageBox.information(self, "Başarılı", "Uygulama ayarları ve API anahtarları güncellendi.")
+
+    def update_theme(self, theme_key: str):
+        key = ThemeManager.normalize_theme_key(theme_key)
+        self.combo_theme.blockSignals(True)
+        for i in range(self.combo_theme.count()):
+            item_text = self.combo_theme.itemText(i)
+            if ThemeManager.normalize_theme_key(item_text) == key:
+                self.combo_theme.setCurrentIndex(i)
+                break
+        self.combo_theme.blockSignals(False)
+
+    def _on_theme_combo_changed(self, text: str):
+        theme_key = ThemeManager.normalize_theme_key(text)
+        self.theme_changed.emit(theme_key)
+
+    def _on_lang_combo_changed(self, text: str):
+        lang_code = "tr" if "TR" in text else ("en" if "EN" in text else ("de" if "DE" in text else "es"))
+        self.language_changed.emit(lang_code)

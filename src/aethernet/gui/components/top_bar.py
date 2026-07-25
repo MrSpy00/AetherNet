@@ -72,14 +72,15 @@ class TopBar(QFrame):
         # Theme Switcher Dropdown
         self.combo_theme = QComboBox()
         self.combo_theme.addItems([
-            "Cyber-Noir",
+            "Aegis Violet AMOLED (Mor / Siyah)",
+            "Cyber-Noir Dark",
             "Digital Fortress",
             "Synthwave",
             "Solar Flare",
             "Tokyo Night",
             "Dracula Pro"
         ])
-        self.combo_theme.setStyleSheet("padding: 4px 8px; font-size: 12px;")
+        self.combo_theme.setStyleSheet("padding: 4px 8px; font-size: 12px; background-color: #0d081a; color: white; border: 1px solid #331f54; border-radius: 6px;")
         self.combo_theme.currentTextChanged.connect(self._on_theme_changed)
         layout.addWidget(self.combo_theme)
 
@@ -97,19 +98,21 @@ class TopBar(QFrame):
             self.lbl_ip_badge.setText("IP: Çevrimdışı")
 
     def update_theme(self, theme_name: str):
-        self.current_theme = theme_name
-        accent = ThemeManager.get_accent_color(theme_name)
+        key = ThemeManager.normalize_theme_key(theme_name)
+        self.current_theme = key
+        accent = ThemeManager.get_accent_color(key)
         self.btn_refresh.setIcon(IconManager.get_icon("refresh", color=accent, size=16))
+        
+        # Block signals briefly to prevent loop when updating combobox programmatically
+        self.combo_theme.blockSignals(True)
+        for i in range(self.combo_theme.count()):
+            item_text = self.combo_theme.itemText(i)
+            if ThemeManager.normalize_theme_key(item_text) == key:
+                self.combo_theme.setCurrentIndex(i)
+                break
+        self.combo_theme.blockSignals(False)
 
     def _on_theme_changed(self, text: str):
-        mapping = {
-            "Cyber-Noir": "cyber_dark",
-            "Digital Fortress": "digital_fortress",
-            "Synthwave": "synthwave",
-            "Solar Flare": "solar_flare",
-            "Tokyo Night": "tokyo_night",
-            "Dracula Pro": "dracula_pro"
-        }
-        theme_key = mapping.get(text, "cyber_dark")
+        theme_key = ThemeManager.normalize_theme_key(text)
         self.update_theme(theme_key)
         self.theme_changed.emit(theme_key)

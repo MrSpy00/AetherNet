@@ -360,12 +360,32 @@ class ThemeManager:
     }}
     """
 
+    THEME_NAME_MAP = {
+        "Aegis Violet AMOLED (Mor / Siyah)": "aegis_violet",
+        "Aegis Violet": "aegis_violet",
+        "Cyber-Noir Dark": "cyber_dark",
+        "Cyber-Noir": "cyber_dark",
+        "Digital Fortress": "digital_fortress",
+        "Synthwave": "synthwave",
+        "Solar Flare": "solar_flare",
+        "Tokyo Night": "tokyo_night",
+        "Dracula Pro": "dracula_pro"
+    }
+
     @classmethod
-    def get_theme_stylesheet(cls, theme_name: str = "cyber_dark") -> str:
-        palette = cls.THEME_COLORS.get(theme_name, cls.THEME_COLORS["cyber_dark"])
+    def normalize_theme_key(cls, name_or_key: str) -> str:
+        if name_or_key in cls.THEME_COLORS:
+            return name_or_key
+        return cls.THEME_NAME_MAP.get(name_or_key, "aegis_violet")
+
+    @classmethod
+    def get_theme_stylesheet(cls, theme_name: str = "aegis_violet") -> str:
+        key = cls.normalize_theme_key(theme_name)
+        palette = cls.THEME_COLORS.get(key, cls.THEME_COLORS["aegis_violet"])
         return cls.CYBER_DARK_QSS.format(**palette)
 
     @classmethod
-    def get_accent_color(cls, theme_name: str = "cyber_dark") -> str:
-        palette = cls.THEME_COLORS.get(theme_name, cls.THEME_COLORS["cyber_dark"])
+    def get_accent_color(cls, theme_name: str = "aegis_violet") -> str:
+        key = cls.normalize_theme_key(theme_name)
+        palette = cls.THEME_COLORS.get(key, cls.THEME_COLORS["aegis_violet"])
         return palette["accent"]

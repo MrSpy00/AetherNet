@@ -2,6 +2,7 @@ import subprocess
 import re
 import psutil
 from typing import List, Optional
+from concurrent.futures import ThreadPoolExecutor
 from loguru import logger
 
 from aethernet.platform.base import BasePlatformAdapter
@@ -153,40 +154,51 @@ class WindowsPlatformAdapter(BasePlatformAdapter):
             packets_recv=adapter_io.packets_recv if adapter_io else 0,
         )
 
+    _password_cache = {}
+
+    def _fetch_profile_details(self, p_name: str) -> WifiProfile:
+        p_name = p_name.strip()
+        if p_name in self._password_cache:
+            return self._password_cache[p_name]
+
+        detail_out = self._run_netsh(["wlan", "show", "profile", f"name={p_name}", "key=clear"])
+        password = None
+        pass_match = re.search(r"Key Content\s*:\s*(.+)", detail_out)
+        if not pass_match:
+            pass_match = re.search(r"Anahtar İçeriği\s*:\s*(.+)", detail_out)
+        if pass_match:
+            password = pass_match.group(1).strip()
+
+        sec_type = "WPA2-Personal"
+        sec_match = re.search(r"Authentication\s*:\s*(.+)", detail_out)
+        if not sec_match:
+            sec_match = re.search(r"Kimlik doğrulaması\s*:\s*(.+)", detail_out)
+        if sec_match:
+            sec_type = sec_match.group(1).strip()
+
+        profile = WifiProfile(
+            name=p_name,
+            ssid=p_name,
+            security_type=sec_type,
+            password=password
+        )
+        self._password_cache[p_name] = profile
+        return profile
+
     def get_saved_profiles(self, include_passwords: bool = False) -> List[WifiProfile]:
         output = self._run_netsh(["wlan", "show", "profiles"])
         profile_names = re.findall(r"All User Profile\s*:\s*(.+)", output)
         if not profile_names:
             profile_names = re.findall(r"Tüm Kullanıcı Profili\s*:\s*(.+)", output)
 
-        profiles = []
-        for p_name in profile_names:
-            p_name = p_name.strip()
-            password = None
-            sec_type = "WPA2-Personal"
+        profile_names = [p.strip() for p in profile_names if p.strip()]
+        if not include_passwords:
+            return [WifiProfile(name=p, ssid=p, security_type="WPA2-Personal") for p in profile_names]
 
-            if include_passwords:
-                detail_out = self._run_netsh(["wlan", "show", "profile", f"name={p_name}", "key=clear"])
-                pass_match = re.search(r"Key Content\s*:\s*(.+)", detail_out)
-                if not pass_match:
-                    pass_match = re.search(r"Anahtar İçeriği\s*:\s*(.+)", detail_out)
-                if pass_match:
-                    password = pass_match.group(1).strip()
+        # Concurrent password recovery via ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=min(12, max(4, len(profile_names)))) as executor:
+            profiles = list(executor.map(self._fetch_profile_details, profile_names))
 
-                sec_match = re.search(r"Authentication\s*:\s*(.+)", detail_out)
-                if not sec_match:
-                    sec_match = re.search(r"Kimlik doğrulaması\s*:\s*(.+)", detail_out)
-                if sec_match:
-                    sec_type = sec_match.group(1).strip()
-
-            profiles.append(
-                WifiProfile(
-                    name=p_name,
-                    ssid=p_name,
-                    security_type=sec_type,
-                    password=password
-                )
-            )
         return profiles
 
     def scan_networks(self) -> List[ScannedNetwork]:
@@ -253,6 +265,12 @@ class WindowsPlatformAdapter(BasePlatformAdapter):
     def connect_profile(self, ssid: str) -> bool:
         res = self._run_netsh(["wlan", "connect", f'name="{ssid}"'])
         return "successfully" in res.lower() or "başarıyla" in res.lower()
+
+    def delete_profile(self, ssid: str) -> bool:
+        res = self._run_netsh(["wlan", "delete", "profile", f'name="{ssid}"'])
+        if ssid in self._password_cache:
+            del self._password_cache[ssid]
+        return "deleted" in res.lower() or "silindi" in res.lower() or "deleted" in res.lower()
 
     def disconnect(self, interface_name: Optional[str] = None) -> bool:
         cmd = ["wlan", "disconnect"]
