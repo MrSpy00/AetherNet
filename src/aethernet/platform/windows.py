@@ -18,13 +18,15 @@ class WindowsPlatformAdapter(BasePlatformAdapter):
     def _run_netsh(self, args: List[str]) -> str:
         """Helper to run netsh command with UTF-8 / CP857/CP1254 fallback decoding"""
         cmd = ["netsh"] + args
+        creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         try:
             res = subprocess.run(
                 cmd,
                 capture_output=True,
                 text=False,
-                creationflags=subprocess.CREATE_NO_WINDOW
+                creationflags=creationflags
             )
+
             # Try utf-8 first, fallback to cp857 / cp1254 for Turkish Windows
             for encoding in ["utf-8", "cp857", "cp1254", "latin-1"]:
                 try:

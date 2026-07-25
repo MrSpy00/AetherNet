@@ -1,9 +1,10 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QTableWidget, QTableWidgetItem, QPushButton, QFrame
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 from aethernet.gui.components.stat_card import StatCard
 from aethernet.gui.components.graph_widget import LiveSignalGraphWidget
+from aethernet.gui.icon_manager import IconManager
 
 class DashboardView(QWidget):
     """Dashboard Main Overview View"""
@@ -19,13 +20,15 @@ class DashboardView(QWidget):
 
         # Header Title Row
         header_row = QHBoxLayout()
-        lbl_header = QLabel("⚡ Ağ ve WiFi Kontrol Paneli")
-        lbl_header.setStyleSheet("font-size: 22px; font-weight: 800; color: #f8fafc;")
+        lbl_header = QLabel("Ağ ve WiFi Kontrol Paneli")
+        lbl_header.setStyleSheet("font-size: 20px; font-weight: bold; color: #f8fafc;")
         header_row.addWidget(lbl_header)
 
         header_row.addStretch()
 
-        btn_quick_scan = QPushButton("🔍 Çevreyi Tara")
+        btn_quick_scan = QPushButton(" Çevreyi Tara")
+        btn_quick_scan.setIcon(IconManager.get_icon("search", color="#00f2fe", size=16))
+        btn_quick_scan.setIconSize(QSize(16, 16))
         btn_quick_scan.setProperty("class", "btn-secondary")
         header_row.addWidget(btn_quick_scan)
 

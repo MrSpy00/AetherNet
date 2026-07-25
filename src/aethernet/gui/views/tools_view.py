@@ -45,7 +45,14 @@ class ToolsView(QWidget):
         self._setup_ssl_tab()
         self._setup_speedtest_tab()
 
+    def closeEvent(self, event):
+        if hasattr(self, 'speed_worker') and self.speed_worker is not None and self.speed_worker.isRunning():
+            self.speed_worker.quit()
+            self.speed_worker.wait(1000)
+        super().closeEvent(event)
+
     def _create_terminal_widget(self, parent_layout):
+
         term_box = QFrame()
         term_box.setProperty("class", "glass-panel")
         term_layout = QVBoxLayout(term_box)

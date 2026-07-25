@@ -93,6 +93,7 @@ class Sidebar(QFrame):
             5: ("tools", self.i18n.t("network_tools")),
             6: ("security", self.i18n.t("security")),
             7: ("pentest", self.i18n.t("pentest")),
+            12: ("globe", "API & Tehdit Hub'ı"),
             9: ("settings", self.i18n.t("settings")),
             10: ("logs", "Loglar && Oturumlar")
         }
@@ -113,6 +114,7 @@ class Sidebar(QFrame):
         self._add_nav_btn(layout, 5)
         self._add_nav_btn(layout, 6)
         self._add_nav_btn(layout, 7)
+        self._add_nav_btn(layout, 12)
 
         self._add_section_label(layout, "SİSTEM")
         self._add_nav_btn(layout, 9)

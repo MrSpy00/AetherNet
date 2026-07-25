@@ -1,7 +1,8 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QFrame, QSplitter
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
+from aethernet.gui.icon_manager import IconManager
 import pyqtgraph as pg
 from collections import Counter
 
@@ -19,13 +20,15 @@ class EnvironmentView(QWidget):
 
         # Header Row
         header_layout = QHBoxLayout()
-        lbl_header = QLabel("🔍 Çevredeki Kablosuz Ağlar (Spektrum Taraması)")
+        lbl_header = QLabel("Çevredeki Kablosuz Ağlar (Spektrum Taraması)")
         lbl_header.setStyleSheet("font-size: 20px; font-weight: bold; color: #f8fafc;")
         header_layout.addWidget(lbl_header)
 
         header_layout.addStretch()
 
-        btn_scan = QPushButton("⚡ Ağları Tara")
+        btn_scan = QPushButton(" Ağları Tara")
+        btn_scan.setIcon(IconManager.get_icon("refresh", color="#ffffff", size=16))
+        btn_scan.setIconSize(QSize(16, 16))
         btn_scan.setProperty("class", "btn-primary")
         btn_scan.clicked.connect(self.scan_environment)
         header_layout.addWidget(btn_scan)
@@ -38,7 +41,7 @@ class EnvironmentView(QWidget):
         self.banner.setStyleSheet("background-color: #0e131f; border: 1px solid #00f2fe; border-radius: 10px; padding: 12px 16px;")
         banner_layout = QHBoxLayout(self.banner)
 
-        self.lbl_recommendation = QLabel("💡 <b>Kanal Önerisi:</b> Taranıyor...")
+        self.lbl_recommendation = QLabel("<b>Kanal Önerisi:</b> Taranıyor...")
         self.lbl_recommendation.setStyleSheet("color: #00f2fe; font-size: 13px;")
         banner_layout.addWidget(self.lbl_recommendation)
         layout.addWidget(self.banner)

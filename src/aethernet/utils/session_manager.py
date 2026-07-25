@@ -13,9 +13,10 @@ class SessionManager:
 
     _current_session: Optional["SessionManager"] = None
 
-    def __init__(self, logs_dir: Path = Path("logs")):
-        self.logs_dir = logs_dir
+    def __init__(self, logs_dir: Any = Path("logs")):
+        self.logs_dir = Path(logs_dir)
         self.sessions_dir = self.logs_dir / "sessions"
+
         self.crashes_dir = self.logs_dir / "crashes"
 
         self.logs_dir.mkdir(parents=True, exist_ok=True)

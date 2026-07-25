@@ -67,11 +67,16 @@ class ProfilesView(QWidget):
         ])
         self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.table.cellDoubleClicked.connect(self._on_cell_double_clicked)
-        layout.addWidget(self.table)
-
         self.load_profiles(include_passwords=False)
 
+    def closeEvent(self, event):
+        if hasattr(self, 'loader_thread') and self.loader_thread is not None and self.loader_thread.isRunning():
+            self.loader_thread.quit()
+            self.loader_thread.wait(1000)
+        super().closeEvent(event)
+
     def load_profiles(self, include_passwords: bool = False):
+
         self.btn_show_passwords.setEnabled(False)
         self.progress.setValue(30)
         

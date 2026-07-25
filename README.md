@@ -78,7 +78,13 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 - **Harici Araç Entegrasyonu**: Nmap ve Tshark gibi endüstri standardı güvenlik araçlarının subprocess orkestrasyonu.
 - **Audit Logging**: Tüm tarama eylemlerinin zaman damgalı olarak `logs/audit.jsonl` dosyasına kaydedilmesi.
 
-#### 9. 🎨 PySide6 GUI & UX
+#### 9. 🌐 External API & Tehdit İstihbaratı Hub'ı
+- **📍 IP Coğrafi Konum & Ağ İstihbaratı**: IP-API, IPify, DB-IP ve IP2Location sağlayıcıları üzerinden otomatik düşüşlü IP, ISP, ASN, coğrafi konum ve Proxy/VPN tespiti.
+- **🛡️ Shodan & CISA KEV Tehdit İstihbaratı**: Kamusal Shodan InternetDB API ile IP açık port ve CVE zafiyet tespiti, ABD CISA Known Exploited Vulnerabilities canlı kataloğu.
+- **🔒 Şifreli DNS-over-HTTPS (DoH)**: Cloudflare, Google ve Quad9 üzerinden DNS-over-HTTPS şifreli sorgu testi ve Quad9 zararlı engelleme analizi.
+- **🌐 Kamusal API Explorer**: `public-apis/public-apis`, `freeapi.app` ve `freepublicapis.com` derlemesi 100+ kategorize edilmiş kamusal API dizini ve canlı arama.
+
+#### 10. 🎨 PySide6 GUI & UX
 - **Cyber-Noir Dark Tema**: Neon vurgulara sahip modern QSS arayüz tasarımı.
 - **Çoklu Dil (i18n)**: Türkçe (Varsayılan), İngilizce, Almanca ve İspanyolca dil desteği.
 

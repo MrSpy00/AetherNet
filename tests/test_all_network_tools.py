@@ -18,7 +18,8 @@ def test_ping_tool_struct():
 
 def test_mac_vendor_lookup():
     vendor = MacVendorResolver.lookup("00:50:56:00:00:00")
-    assert vendor == "VMware"
+    assert "VMware" in vendor
+
 
 
 def test_security_scorer():

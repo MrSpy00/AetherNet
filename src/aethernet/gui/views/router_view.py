@@ -175,7 +175,14 @@ class RouterView(QWidget):
         self._populate_creds_table(DEFAULT_ROUTER_CREDS)
         self._run_gateway_detection()
 
+    def closeEvent(self, event):
+        if hasattr(self, 'worker') and self.worker is not None and self.worker.isRunning():
+            self.worker.quit()
+            self.worker.wait(1000)
+        super().closeEvent(event)
+
     def _run_gateway_detection(self):
+
         self.card_gw_brand.set_value("Taranıyor...", "Lütfen Bekleyin")
         self.worker = GatewayDetectWorker(self.input_gw_ip.text().strip())
         self.worker.finished.connect(self._on_detection_finished)

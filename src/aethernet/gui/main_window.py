@@ -25,6 +25,7 @@ from aethernet.gui.views.topology_view import TopologyView
 from aethernet.gui.views.router_view import RouterView
 from aethernet.gui.views.settings_view import SettingsView
 from aethernet.gui.views.logs_view import LogsView
+from aethernet.gui.views.api_hub_view import APIHubView
 
 class MainWindow(QMainWindow):
     """AetherNet Primary GUI Window"""
@@ -102,6 +103,7 @@ class MainWindow(QMainWindow):
         self.view_router = RouterView(self.platform_adapter, self.i18n)
         self.view_settings = SettingsView(self.i18n)
         self.view_logs = LogsView(self.i18n)
+        self.view_api_hub = APIHubView(self.platform_adapter, self.i18n)
 
         # Mapping dict from nav index to view widget
         self.view_map = {
@@ -116,11 +118,12 @@ class MainWindow(QMainWindow):
             8: self.view_topology,
             9: self.view_settings,
             10: self.view_logs,
-            11: self.view_router
+            11: self.view_router,
+            12: self.view_api_hub
         }
 
         # Add all views to stacked widget
-        for i in range(12):
+        for i in self.view_map.keys():
             self.stacked_widget.addWidget(self.view_map[i])
 
         # Setup Refresh Timer (Every 3 seconds)
@@ -131,7 +134,13 @@ class MainWindow(QMainWindow):
         # Initial refresh
         self._on_timer_tick()
 
+    def closeEvent(self, event):
+        if hasattr(self, 'timer') and self.timer.isActive():
+            self.timer.stop()
+        super().closeEvent(event)
+
     def _on_navigation(self, index: int):
+
         if index in self.view_map:
             widget = self.view_map[index]
             stacked_idx = self.stacked_widget.indexOf(widget)
