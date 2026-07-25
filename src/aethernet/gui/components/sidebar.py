@@ -94,7 +94,7 @@ class Sidebar(QFrame):
             6: ("security", self.i18n.t("security")),
             7: ("pentest", self.i18n.t("pentest")),
             9: ("settings", self.i18n.t("settings")),
-            10: ("logs", "Loglar & Oturumlar")
+            10: ("logs", "Loglar && Oturumlar")
         }
 
         # Nav Sections

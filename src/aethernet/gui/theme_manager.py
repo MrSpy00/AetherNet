@@ -285,7 +285,7 @@ class ThemeManager:
     }}
 
     QSlider::sub-page:horizontal {{
-        background: {accent};
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 {secondary}, stop:1 {accent});
         border-radius: 3px;
     }}
 
@@ -295,7 +295,16 @@ class ThemeManager:
         width: 14px;
         height: 14px;
         margin: -4px 0;
-        border-radius: 7px;
+        border-radius: 8px;
+    }}
+
+    QSlider::handle:horizontal:hover {{
+        background: #ffffff;
+        border: 2px solid {accent};
+        width: 16px;
+        height: 16px;
+        margin: -5px 0;
+        border-radius: 9px;
     }}
 
     /* Tabs */

@@ -164,7 +164,7 @@ class WindowsPlatformAdapter(BasePlatformAdapter):
             sec_type = "WPA2-Personal"
 
             if include_passwords:
-                detail_out = self._run_netsh(["wlan", "show", "profile", f'name="{p_name}"', "key=clear"])
+                detail_out = self._run_netsh(["wlan", "show", "profile", f"name={p_name}", "key=clear"])
                 pass_match = re.search(r"Key Content\s*:\s*(.+)", detail_out)
                 if not pass_match:
                     pass_match = re.search(r"Anahtar İçeriği\s*:\s*(.+)", detail_out)

@@ -21,13 +21,18 @@ class PingTool:
     """Tekli veya sürekli ICMP/System Ping aracı"""
 
     @staticmethod
-    def ping(target: str, count: int = 4, timeout_sec: int = 2) -> PingResult:
+    def ping(target: str, count: int = 4, timeout_sec: float = 2.0, timeout_ms: Optional[int] = None, timeout: Optional[float] = None, **kwargs) -> PingResult:
+        if timeout_ms is not None:
+            timeout_sec = timeout_ms / 1000.0
+        elif timeout is not None:
+            timeout_sec = float(timeout)
+
         replies: List[float] = []
         
         if sys.platform == "win32":
-            cmd = ["ping", "-n", str(count), "-w", str(timeout_sec * 1000), target]
+            cmd = ["ping", "-n", str(count), "-w", str(int(timeout_sec * 1000)), target]
         else:
-            cmd = ["ping", "-c", str(count), "-W", str(timeout_sec), target]
+            cmd = ["ping", "-c", str(count), "-W", str(int(timeout_sec)), target]
 
         try:
             res = subprocess.run(
@@ -56,7 +61,6 @@ class PingTool:
             min_ms = min(replies)
             max_ms = max(replies)
             avg_ms = round(sum(replies) / len(replies), 1)
-            # Simple jitter calculation (average variance between consecutive pings)
             jitter = 0.0
             if len(replies) > 1:
                 diffs = [abs(replies[i] - replies[i-1]) for i in range(1, len(replies))]
