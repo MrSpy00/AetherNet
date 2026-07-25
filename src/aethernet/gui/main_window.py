@@ -11,6 +11,7 @@ from aethernet.gui.i18n_manager import I18nManager
 from aethernet.gui.animations import FadingStackedWidget
 from aethernet.gui.components.top_bar import TopBar
 from aethernet.gui.components.sidebar import Sidebar
+from aethernet.utils.path_utils import get_asset_path
 
 from aethernet.gui.views.dashboard_view import DashboardView
 from aethernet.gui.views.wifi_view import WifiView
@@ -21,6 +22,7 @@ from aethernet.gui.views.tools_view import ToolsView
 from aethernet.gui.views.security_view import SecurityView
 from aethernet.gui.views.pentest_view import PentestView
 from aethernet.gui.views.topology_view import TopologyView
+from aethernet.gui.views.router_view import RouterView
 from aethernet.gui.views.settings_view import SettingsView
 from aethernet.gui.views.logs_view import LogsView
 
@@ -30,13 +32,13 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # Window Title and Icon
-        self.setWindowTitle("AetherNet - WiFi & Ağ Yönetim Hub'ı PRO")
+        self.setWindowTitle("AetherNet - WiFi & Ağ Yönetim Hub'ı")
         self.resize(1340, 850)
 
         # Set Window Icon
-        icon_path = Path("assets/icon.ico")
+        icon_path = get_asset_path("assets/icon.ico")
         if not icon_path.exists():
-            icon_path = Path("assets/logo.png")
+            icon_path = get_asset_path("assets/logo.png")
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 
@@ -91,20 +93,29 @@ class MainWindow(QMainWindow):
         self.view_security = SecurityView(self.platform_adapter, self.i18n)
         self.view_pentest = PentestView(self.platform_adapter, self.i18n)
         self.view_topology = TopologyView(self.platform_adapter, self.i18n)
+        self.view_router = RouterView(self.platform_adapter, self.i18n)
         self.view_settings = SettingsView(self.i18n)
         self.view_logs = LogsView(self.i18n)
 
-        self.stacked_widget.addWidget(self.view_dashboard)     # 0
-        self.stacked_widget.addWidget(self.view_wifi)          # 1
-        self.stacked_widget.addWidget(self.view_profiles)      # 2
-        self.stacked_widget.addWidget(self.view_env)           # 3
-        self.stacked_widget.addWidget(self.view_discovery)     # 4
-        self.stacked_widget.addWidget(self.view_tools)         # 5
-        self.stacked_widget.addWidget(self.view_security)      # 6
-        self.stacked_widget.addWidget(self.view_pentest)       # 7
-        self.stacked_widget.addWidget(self.view_topology)      # 8
-        self.stacked_widget.addWidget(self.view_settings)      # 9
-        self.stacked_widget.addWidget(self.view_logs)          # 10
+        # Mapping dict from nav index to view widget
+        self.view_map = {
+            0: self.view_dashboard,
+            1: self.view_wifi,
+            2: self.view_profiles,
+            3: self.view_env,
+            4: self.view_discovery,
+            5: self.view_tools,
+            6: self.view_security,
+            7: self.view_pentest,
+            8: self.view_topology,
+            9: self.view_settings,
+            10: self.view_logs,
+            11: self.view_router
+        }
+
+        # Add all views to stacked widget
+        for i in range(12):
+            self.stacked_widget.addWidget(self.view_map[i])
 
         # Setup Refresh Timer (Every 3 seconds)
         self.timer = QTimer(self)
@@ -115,7 +126,11 @@ class MainWindow(QMainWindow):
         self._on_timer_tick()
 
     def _on_navigation(self, index: int):
-        self.stacked_widget.setCurrentIndex(index)
+        if index in self.view_map:
+            widget = self.view_map[index]
+            stacked_idx = self.stacked_widget.indexOf(widget)
+            if stacked_idx >= 0:
+                self.stacked_widget.setCurrentIndex(stacked_idx)
 
     def _on_theme_changed(self, theme_name: str):
         self.current_theme = theme_name

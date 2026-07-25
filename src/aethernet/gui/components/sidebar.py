@@ -1,9 +1,10 @@
 from pathlib import Path
 from PySide6.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QButtonGroup
 from PySide6.QtCore import Signal, Qt, QSize
-from PySide6.QtGui import QPixmap, QIcon, QBitmap, QPainter, QPainterPath
+from PySide6.QtGui import QPixmap, QIcon, QPainter, QPainterPath
 from aethernet.gui.icon_manager import IconManager
 from aethernet.gui.theme_manager import ThemeManager
+from aethernet.utils.path_utils import get_asset_path
 
 class Sidebar(QFrame):
     """Cyber Navigation Sidebar with Rounded Brand Logo & Vector SVG Icons"""
@@ -16,28 +17,28 @@ class Sidebar(QFrame):
         self.i18n = i18n_manager
         self.is_collapsed = False
         self.current_theme = "cyber_dark"
+        self.section_labels = []
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(12, 14, 12, 14)
+        layout.setContentsMargins(10, 12, 10, 12)
         layout.setSpacing(6)
 
         # Header Row: Logo + Brand Title + Collapse Button
         self.header_frame = QFrame()
         self.header_frame.setFixedHeight(44)
         header_layout = QHBoxLayout(self.header_frame)
-        header_layout.setContentsMargins(4, 0, 4, 0)
-        header_layout.setSpacing(10)
+        header_layout.setContentsMargins(2, 0, 2, 0)
+        header_layout.setSpacing(8)
 
         # Rounded Logo Widget
         self.lbl_logo = QLabel()
         self.lbl_logo.setFixedSize(30, 30)
-        logo_path = Path("assets/logo.png")
+        logo_path = get_asset_path("assets/logo.png")
         if not logo_path.exists():
-            logo_path = Path("assets/icon.ico")
+            logo_path = get_asset_path("assets/icon.ico")
+        
         if logo_path.exists():
             pix = QPixmap(str(logo_path)).scaled(30, 30, Qt.KeepAspectRatio, Qt.SmoothTransformation)
-            
-            # Apply Rounded Corners to Logo Pixmap
             rounded_pix = QPixmap(30, 30)
             rounded_pix.fill(Qt.transparent)
             painter = QPainter(rounded_pix)
@@ -47,7 +48,6 @@ class Sidebar(QFrame):
             painter.setClipPath(path)
             painter.drawPixmap(0, 0, pix)
             painter.end()
-
             self.lbl_logo.setPixmap(rounded_pix)
 
         header_layout.addWidget(self.lbl_logo)
@@ -62,13 +62,13 @@ class Sidebar(QFrame):
         self.btn_collapse = QPushButton()
         self.btn_collapse.setIcon(IconManager.get_icon("chevron_left", color="#00f2fe", size=14))
         self.btn_collapse.setIconSize(QSize(14, 14))
-        self.btn_collapse.setFixedSize(32, 32)
+        self.btn_collapse.setFixedSize(28, 28)
         self.btn_collapse.setCursor(Qt.PointingHandCursor)
         self.btn_collapse.setStyleSheet("""
             QPushButton {
                 background-color: #141c2e;
                 border: 1px solid #1d273c;
-                border-radius: 8px;
+                border-radius: 6px;
             }
             QPushButton:hover {
                 background-color: #1e293d;
@@ -89,6 +89,7 @@ class Sidebar(QFrame):
             3: ("environment", self.i18n.t("environment_scan")),
             4: ("discovery", self.i18n.t("device_discovery")),
             8: ("topology", self.i18n.t("topology_map", "Ağ Topolojisi")),
+            11: ("router", "Modem Yönetimi"),
             5: ("tools", self.i18n.t("network_tools")),
             6: ("security", self.i18n.t("security")),
             7: ("pentest", self.i18n.t("pentest")),
@@ -106,6 +107,7 @@ class Sidebar(QFrame):
         self._add_nav_btn(layout, 3)
         self._add_nav_btn(layout, 4)
         self._add_nav_btn(layout, 8)
+        self._add_nav_btn(layout, 11)
 
         self._add_section_label(layout, "GÜVENLİK & ARAÇLAR")
         self._add_nav_btn(layout, 5)
@@ -118,8 +120,8 @@ class Sidebar(QFrame):
 
         layout.addStretch()
 
-        self.lbl_version = QLabel("v0.1.0 PRO | MrSpy00")
-        self.lbl_version.setStyleSheet("color: #475569; font-size: 11px; padding: 8px; background: transparent;")
+        self.lbl_version = QLabel("v0.1.0 | MrSpy00")
+        self.lbl_version.setStyleSheet("color: #475569; font-size: 11px; padding: 6px; background: transparent;")
         layout.addWidget(self.lbl_version)
 
         self.btn_group.idClicked.connect(self._on_button_clicked)
@@ -128,6 +130,7 @@ class Sidebar(QFrame):
         lbl = QLabel(text)
         lbl.setProperty("class", "section-label")
         layout.addWidget(lbl)
+        self.section_labels.append(lbl)
 
     def _add_nav_btn(self, layout, index: int):
         icon_name, label_text = self.icon_mapping[index]
@@ -179,6 +182,8 @@ class Sidebar(QFrame):
             self.lbl_brand.hide()
             self.btn_collapse.setIcon(IconManager.get_icon("chevron_right", color=accent, size=14))
             self.lbl_version.hide()
+            for lbl in self.section_labels:
+                lbl.hide()
             for btn in self.btn_group.buttons():
                 btn.setText("")
         else:
@@ -186,6 +191,8 @@ class Sidebar(QFrame):
             self.lbl_brand.show()
             self.btn_collapse.setIcon(IconManager.get_icon("chevron_left", color=accent, size=14))
             self.lbl_version.show()
+            for lbl in self.section_labels:
+                lbl.show()
             for btn in self.btn_group.buttons():
                 actual_id = self.btn_group.id(btn)
                 _, label_text = self.icon_mapping[actual_id]

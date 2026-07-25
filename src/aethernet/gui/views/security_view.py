@@ -1,15 +1,16 @@
 from PySide6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTextEdit, QFrame, QProgressBar
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 from aethernet.security.security_scorer import SecurityScorer
 from aethernet.security.rogue_ap_detector import RogueApDetector
 from aethernet.security.arp_spoof_detector import ARPSpoofDetector
 from aethernet.security.dns_leak_checker import DNSLeakChecker
 from aethernet.gui.components.stat_card import StatCard
+from aethernet.gui.icon_manager import IconManager
 
 class SecurityView(QWidget):
-    """Network Security Score & Defense Analysis View"""
+    """Network Security Score & Defense Analysis View with Vector Icons"""
 
     def __init__(self, platform_adapter, i18n, parent=None):
         super().__init__(parent)
@@ -21,13 +22,15 @@ class SecurityView(QWidget):
         layout.setSpacing(16)
 
         header_layout = QHBoxLayout()
-        lbl_header = QLabel("🛡️ Güvenlik ve Savunma Analizi")
+        lbl_header = QLabel("Güvenlik ve Savunma Analizi")
         lbl_header.setStyleSheet("font-size: 20px; font-weight: bold; color: #f8fafc;")
         header_layout.addWidget(lbl_header)
 
         header_layout.addStretch()
 
-        btn_eval = QPushButton("🛡️ Güvenlik Analizini Yenile")
+        btn_eval = QPushButton(" Güvenlik Analizini Yenile")
+        btn_eval.setIcon(IconManager.get_icon("security", color="#ffffff", size=16))
+        btn_eval.setIconSize(QSize(16, 16))
         btn_eval.setProperty("class", "btn-primary")
         btn_eval.clicked.connect(self.run_security_audit)
         header_layout.addWidget(btn_eval)

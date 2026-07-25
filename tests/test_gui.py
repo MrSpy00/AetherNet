@@ -12,5 +12,5 @@ def qapp():
 
 def test_main_window_instantiation(qapp):
     win = MainWindow()
-    assert win.windowTitle().startswith("AetherNet")
-    assert win.stacked_widget.count() == 11
+    assert win.windowTitle() == "AetherNet - WiFi & Ağ Yönetim Hub'ı"
+    assert win.stacked_widget.count() == 12
