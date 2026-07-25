@@ -1,0 +1,28 @@
+app:
+  name: "AetherNet"
+  version: "0.1.0"
+  developer: "MrSpy00"
+  github_url: "https://github.com/MrSpy00"
+  language: "tr"          # tr, en, de, es
+  theme: "cyber_dark"     # cyber_dark, digital_fortress, light
+  refresh_interval: 3     # seconds for UI live updates
+
+network:
+  scan_interval_seconds: 10
+  ping_default_target: "8.8.8.8"
+  dns_default_server: "1.1.1.1"
+  passive_subdomain_discovery: true
+
+security:
+  authorized_pentest_accepted: false
+  alert_weak_protocols: true
+  rogue_ap_detection: true
+
+ai:
+  enabled: false
+  provider: "deepseek"   # deepseek, openai, anthropic, gemini, ollama
+  model: "deepseek-chat"
+
+notifications:
+  desktop_enabled: true
+  sound_enabled: false

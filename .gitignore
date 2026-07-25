@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# Log files & Database
+*.log
+logs/
+*.sqlite
+*.sqlite3
+*.db
+
+# Environment & Sensitive configs
+.env
+.env.local
+config.user.yaml
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Test / Coverage
+.pytest_cache/
+.coverage
+htmlcov/
