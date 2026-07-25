@@ -1,5 +1,6 @@
+from pathlib import Path
 from PySide6.QtWidgets import (
-    QMainWindow, QWidget, QHBoxLayout, QStackedWidget, QSystemTrayIcon, QMenu
+    QMainWindow, QWidget, QHBoxLayout, QVBoxLayout, QSystemTrayIcon, QMenu
 )
 from PySide6.QtCore import QTimer, Qt
 from PySide6.QtGui import QIcon
@@ -7,6 +8,8 @@ from PySide6.QtGui import QIcon
 from aethernet.platform import get_platform_adapter
 from aethernet.gui.theme_manager import ThemeManager
 from aethernet.gui.i18n_manager import I18nManager
+from aethernet.gui.animations import FadingStackedWidget
+from aethernet.gui.components.top_bar import TopBar
 from aethernet.gui.components.sidebar import Sidebar
 
 from aethernet.gui.views.dashboard_view import DashboardView
@@ -19,6 +22,7 @@ from aethernet.gui.views.security_view import SecurityView
 from aethernet.gui.views.pentest_view import PentestView
 from aethernet.gui.views.topology_view import TopologyView
 from aethernet.gui.views.settings_view import SettingsView
+from aethernet.gui.views.logs_view import LogsView
 
 class MainWindow(QMainWindow):
     """AetherNet Primary GUI Window"""
@@ -26,8 +30,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # Window Title and Icon
-        self.setWindowTitle("AetherNet - WiFi & Ağ Yönetim Hub'ı")
-        self.resize(1280, 800)
+        self.setWindowTitle("AetherNet - WiFi & Ağ Yönetim Hub'ı PRO")
+        self.resize(1340, 850)
 
         # Set Window Icon
         icon_path = Path("assets/icon.ico")
@@ -36,30 +40,46 @@ class MainWindow(QMainWindow):
         if icon_path.exists():
             self.setWindowIcon(QIcon(str(icon_path)))
 
-
         # Platform adapter & i18n
         self.platform_adapter = get_platform_adapter()
         self.i18n = I18nManager("tr")
 
-        # Apply Cyber-Noir QSS Theme
-        self.setStyleSheet(ThemeManager.get_theme_stylesheet("cyber_dark"))
+        # Apply Initial Theme
+        self.current_theme = "cyber_dark"
+        self.setStyleSheet(ThemeManager.get_theme_stylesheet(self.current_theme))
 
-        # Central Layout
+        # Central Root Layout
         central_widget = QWidget()
+        central_widget.setObjectName("CentralWidget")
         self.setCentralWidget(central_widget)
 
-        main_layout = QHBoxLayout(central_widget)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
+        root_layout = QHBoxLayout(central_widget)
+        root_layout.setContentsMargins(0, 0, 0, 0)
+        root_layout.setSpacing(0)
 
-        # Sidebar
+        # Sidebar Panel
         self.sidebar = Sidebar(self.i18n)
         self.sidebar.nav_changed.connect(self._on_navigation)
-        main_layout.addWidget(self.sidebar)
+        root_layout.addWidget(self.sidebar)
 
-        # Stacked Views Container
-        self.stacked_widget = QStackedWidget()
-        main_layout.addWidget(self.stacked_widget)
+        # Right Main Content (TopBar + FadingStackedWidget)
+        right_container = QWidget()
+        right_container.setObjectName("RightContainer")
+        right_layout = QVBoxLayout(right_container)
+        right_layout.setContentsMargins(0, 0, 0, 0)
+        right_layout.setSpacing(0)
+
+        # Top Bar
+        self.top_bar = TopBar(self.i18n)
+        self.top_bar.refresh_requested.connect(self._on_timer_tick)
+        self.top_bar.theme_changed.connect(self._on_theme_changed)
+        right_layout.addWidget(self.top_bar)
+
+        # Animated Fading Stacked Views Container
+        self.stacked_widget = FadingStackedWidget()
+        right_layout.addWidget(self.stacked_widget)
+
+        root_layout.addWidget(right_container)
 
         # Initialize Views
         self.view_dashboard = DashboardView(self.platform_adapter, self.i18n)
@@ -72,17 +92,19 @@ class MainWindow(QMainWindow):
         self.view_pentest = PentestView(self.platform_adapter, self.i18n)
         self.view_topology = TopologyView(self.platform_adapter, self.i18n)
         self.view_settings = SettingsView(self.i18n)
+        self.view_logs = LogsView(self.i18n)
 
-        self.stacked_widget.addWidget(self.view_dashboard)
-        self.stacked_widget.addWidget(self.view_wifi)
-        self.stacked_widget.addWidget(self.view_profiles)
-        self.stacked_widget.addWidget(self.view_env)
-        self.stacked_widget.addWidget(self.view_discovery)
-        self.stacked_widget.addWidget(self.view_tools)
-        self.stacked_widget.addWidget(self.view_security)
-        self.stacked_widget.addWidget(self.view_pentest)
-        self.stacked_widget.addWidget(self.view_topology)
-        self.stacked_widget.addWidget(self.view_settings)
+        self.stacked_widget.addWidget(self.view_dashboard)     # 0
+        self.stacked_widget.addWidget(self.view_wifi)          # 1
+        self.stacked_widget.addWidget(self.view_profiles)      # 2
+        self.stacked_widget.addWidget(self.view_env)           # 3
+        self.stacked_widget.addWidget(self.view_discovery)     # 4
+        self.stacked_widget.addWidget(self.view_tools)         # 5
+        self.stacked_widget.addWidget(self.view_security)      # 6
+        self.stacked_widget.addWidget(self.view_pentest)       # 7
+        self.stacked_widget.addWidget(self.view_topology)      # 8
+        self.stacked_widget.addWidget(self.view_settings)      # 9
+        self.stacked_widget.addWidget(self.view_logs)          # 10
 
         # Setup Refresh Timer (Every 3 seconds)
         self.timer = QTimer(self)
@@ -95,6 +117,19 @@ class MainWindow(QMainWindow):
     def _on_navigation(self, index: int):
         self.stacked_widget.setCurrentIndex(index)
 
+    def _on_theme_changed(self, theme_name: str):
+        self.current_theme = theme_name
+        self.setStyleSheet(ThemeManager.get_theme_stylesheet(theme_name))
+
     def _on_timer_tick(self):
         # Refresh dashboard live metrics
         self.view_dashboard.refresh_data()
+
+        # Update top bar status
+        conn = self.platform_adapter.get_current_connection()
+        if conn:
+            ifaces = self.platform_adapter.get_interfaces()
+            active_ip = next((i.ipv4_address for i in ifaces if i.is_enabled and i.ipv4_address), "")
+            self.top_bar.update_status(True, conn.ssid, active_ip)
+        else:
+            self.top_bar.update_status(False)

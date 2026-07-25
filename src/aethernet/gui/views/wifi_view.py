@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QLineEdit
 )
 from PySide6.QtCore import Qt
 
@@ -16,9 +16,17 @@ class WifiView(QWidget):
         layout.setSpacing(16)
 
         header_layout = QHBoxLayout()
-        lbl_header = QLabel("WiFi Adaptör ve Bağlantı Yönetimi")
+        lbl_header = QLabel("📶 WiFi Adaptör ve Bağlantı Yönetimi")
         lbl_header.setStyleSheet("font-size: 20px; font-weight: bold; color: #f8fafc;")
         header_layout.addWidget(lbl_header)
+
+        header_layout.addStretch()
+
+        self.input_search = QLineEdit()
+        self.input_search.setPlaceholderText("🔎 Adaptör Ara...")
+        self.input_search.setFixedWidth(200)
+        self.input_search.textChanged.connect(self._filter_table)
+        header_layout.addWidget(self.input_search)
 
         btn_refresh = QPushButton("🔄 Yenile")
         btn_refresh.setProperty("class", "btn-secondary")
@@ -42,8 +50,8 @@ class WifiView(QWidget):
 
         # Connection Controls
         ctrl_layout = QHBoxLayout()
-        self.btn_disconnect = QPushButton(" Bağlantıyı Kes")
-        self.btn_disconnect.setProperty("class", "btn-secondary")
+        self.btn_disconnect = QPushButton("🔌 Bağlantıyı Kes")
+        self.btn_disconnect.setProperty("class", "btn-danger")
         self.btn_disconnect.clicked.connect(self._disconnect)
         ctrl_layout.addWidget(self.btn_disconnect)
         ctrl_layout.addStretch()
@@ -58,10 +66,21 @@ class WifiView(QWidget):
         for idx, iface in enumerate(ifaces):
             self.table_interfaces.setItem(idx, 0, QTableWidgetItem(iface.name))
             self.table_interfaces.setItem(idx, 1, QTableWidgetItem(iface.mac_address))
-            self.table_interfaces.setItem(idx, 2, QTableWidgetItem("Etkin" if iface.is_enabled else "Devre Dışı"))
+            status_item = QTableWidgetItem("🟢 Etkin" if iface.is_enabled else "🔴 Devre Dışı")
+            self.table_interfaces.setItem(idx, 2, status_item)
             self.table_interfaces.setItem(idx, 3, QTableWidgetItem(iface.ipv4_address or "---"))
             self.table_interfaces.setItem(idx, 4, QTableWidgetItem(iface.ipv4_subnet or "---"))
-            self.table_interfaces.setItem(idx, 5, QTableWidgetItem("Evet (WiFi)" if iface.is_wifi else "Hayır (Ethernet/Diğer)"))
+            wifi_item = QTableWidgetItem("📶 Evet (WiFi)" if iface.is_wifi else "🔌 Ethernet")
+            self.table_interfaces.setItem(idx, 5, wifi_item)
+
+    def _filter_table(self, query: str):
+        query = query.lower()
+        for row in range(self.table_interfaces.rowCount()):
+            item = self.table_interfaces.item(row, 0)
+            if item and query in item.text().lower():
+                self.table_interfaces.setRowHidden(row, False)
+            else:
+                self.table_interfaces.setRowHidden(row, True)
 
     def _disconnect(self):
         self.adapter.disconnect()

@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMessageBox
+    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QTableWidget, QTableWidgetItem, QHeaderView, QMessageBox, QLineEdit
 )
+from PySide6.QtGui import QGuiApplication
 from PySide6.QtCore import Qt
 
 class ProfilesView(QWidget):
@@ -16,9 +17,17 @@ class ProfilesView(QWidget):
         layout.setSpacing(16)
 
         header_layout = QHBoxLayout()
-        lbl_header = QLabel("Kayıtlı WiFi Profilleri")
+        lbl_header = QLabel("🔑 Kayıtlı WiFi Profilleri")
         lbl_header.setStyleSheet("font-size: 20px; font-weight: bold; color: #f8fafc;")
         header_layout.addWidget(lbl_header)
+
+        header_layout.addStretch()
+
+        self.input_search = QLineEdit()
+        self.input_search.setPlaceholderText("🔎 Profil Ara...")
+        self.input_search.setFixedWidth(200)
+        self.input_search.textChanged.connect(self._filter_table)
+        header_layout.addWidget(self.input_search)
 
         btn_show_passwords = QPushButton("🔑 Kayıtlı Şifreleri Göster")
         btn_show_passwords.setProperty("class", "btn-primary")
@@ -42,12 +51,21 @@ class ProfilesView(QWidget):
         self.table.setRowCount(len(profiles))
 
         for idx, prof in enumerate(profiles):
-            self.table.setItem(idx, 0, QTableWidgetItem(prof.name))
+            self.table.setItem(idx, 0, QTableWidgetItem(f"📶 {prof.name}"))
             self.table.setItem(idx, 1, QTableWidgetItem(prof.security_type))
-            self.table.setItem(idx, 2, QTableWidgetItem("Evet" if prof.auto_connect else "Hayır"))
+            self.table.setItem(idx, 2, QTableWidgetItem("🟢 Evet" if prof.auto_connect else "⚪ Hayır"))
             pass_val = prof.password if prof.password else ("••••••••" if not include_passwords else "<Açık Ağ / Şifresiz>")
             self.table.setItem(idx, 3, QTableWidgetItem(pass_val))
 
+    def _filter_table(self, query: str):
+        query = query.lower()
+        for row in range(self.table.rowCount()):
+            item = self.table.item(row, 0)
+            if item and query in item.text().lower():
+                self.table.setRowHidden(row, False)
+            else:
+                self.table.setRowHidden(row, True)
+
     def _load_profiles_with_passwords(self):
         self.load_profiles(include_passwords=True)
-        QMessageBox.information(self, "Bilgi", "Kayıtlı WiFi şifreleri başarıyla okundu.")
+        QMessageBox.information(self, "Başarılı", "Kayıtlı WiFi şifreleri başarıyla okundu.")

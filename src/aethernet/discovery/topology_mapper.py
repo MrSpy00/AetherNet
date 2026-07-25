@@ -37,10 +37,16 @@ class NetworkTopologyMapper:
         )
 
         for dev in discovered_devices:
-            ip = dev.get("ip", "0.0.0.0")
-            mac = dev.get("mac", "00:00:00:00:00:00")
-            hostname = dev.get("hostname", ip)
-            dtype = dev.get("device_type", "Host")
+            if isinstance(dev, dict):
+                ip = dev.get("ip", "0.0.0.0")
+                mac = dev.get("mac", "00:00:00:00:00:00")
+                hostname = dev.get("hostname", ip) or ip
+                dtype = dev.get("device_type", "Host")
+            else:
+                ip = getattr(dev, "ip", "0.0.0.0")
+                mac = getattr(dev, "mac", "00:00:00:00:00:00")
+                hostname = getattr(dev, "hostname", ip) or ip
+                dtype = getattr(dev, "device_type", "Host")
 
             if ip == gateway_ip:
                 continue
