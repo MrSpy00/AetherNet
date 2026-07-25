@@ -29,13 +29,14 @@ def setup_logger(log_dir: Path = Path("logs")):
 
     logger.remove()
 
-    # 1. Console Output (Colorized)
-    logger.add(
-        sys.stdout,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level:7}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-        level="INFO",
-        colorize=True
-    )
+    # 1. Console Output (Colorized) - only if stdout is available
+    if sys.stdout is not None:
+        logger.add(
+            sys.stdout,
+            format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level:7}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
+            level="INFO",
+            colorize=True
+        )
 
     # 2. Individual Session Log File
     logger.add(
