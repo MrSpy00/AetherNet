@@ -32,7 +32,8 @@ class Sidebar(QFrame):
             (5, "🛠️ " + self.i18n.t("network_tools")),
             (6, "🛡️ " + self.i18n.t("security")),
             (7, "⚡ " + self.i18n.t("pentest")),
-            (8, "⚙️ " + self.i18n.t("settings")),
+            (8, "🌐 " + self.i18n.t("topology_map", "Ağ Topolojisi")),
+            (9, "⚙️ " + self.i18n.t("settings")),
         ]
 
         for index, label_text in self.nav_items:

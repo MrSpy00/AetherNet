@@ -14,6 +14,7 @@ class I18nManager:
             "network_tools": "Ağ Araçları",
             "security": "Güvenlik & Savunma",
             "pentest": "Sertifikalı Pentest",
+            "topology_map": "Ağ Topolojisi",
             "settings": "Ayarlar",
             "status_connected": "Bağlı",
             "status_disconnected": "Bağlı Değil",

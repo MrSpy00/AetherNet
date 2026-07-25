@@ -17,6 +17,7 @@ from aethernet.gui.views.discovery_view import DiscoveryView
 from aethernet.gui.views.tools_view import ToolsView
 from aethernet.gui.views.security_view import SecurityView
 from aethernet.gui.views.pentest_view import PentestView
+from aethernet.gui.views.topology_view import TopologyView
 from aethernet.gui.views.settings_view import SettingsView
 
 class MainWindow(QMainWindow):
@@ -69,6 +70,7 @@ class MainWindow(QMainWindow):
         self.view_tools = ToolsView(self.platform_adapter, self.i18n)
         self.view_security = SecurityView(self.platform_adapter, self.i18n)
         self.view_pentest = PentestView(self.platform_adapter, self.i18n)
+        self.view_topology = TopologyView(self.platform_adapter, self.i18n)
         self.view_settings = SettingsView(self.i18n)
 
         self.stacked_widget.addWidget(self.view_dashboard)
@@ -79,6 +81,7 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.view_tools)
         self.stacked_widget.addWidget(self.view_security)
         self.stacked_widget.addWidget(self.view_pentest)
+        self.stacked_widget.addWidget(self.view_topology)
         self.stacked_widget.addWidget(self.view_settings)
 
         # Setup Refresh Timer (Every 3 seconds)
