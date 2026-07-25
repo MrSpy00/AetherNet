@@ -20,8 +20,9 @@ security:
 
 ai:
   enabled: false
-  provider: "deepseek"   # deepseek, openai, anthropic, gemini, ollama
+  provider: "deepseek"   # deepseek, openai, anthropic, gemini, groq, mistral, ollama
   model: "deepseek-chat"
+
 
 notifications:
   desktop_enabled: true

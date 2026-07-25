@@ -7,9 +7,12 @@
 
 > **AetherNet**, kablosuz ağ adaptörlerinizi, aktif bağlantılarınızı, kayıtlı profillerinizi ve çevrenizdeki WiFi ortamını eksiksiz görüntüleyip yönetmenizi sağlayan; aynı zamanda gelişmiş ağ tanılamaları, yerel cihaz envanteri, güvenlik/savunma analizleri ve yetkilendirilmiş pentest araç entegrasyonlarını tek bir Cyber-Noir arayüzde birleştiren profesyonel, masaüstü bir ağ yönetim hub'ıdır.
 
+- **Pluggable AI Sağlayıcı Katmanı**: Doğal dilde ağ analizi ve tanılama sohbetleri için **DeepSeek**, **Groq Cloud** ([console.groq.com/keys](https://console.groq.com/keys)), **Mistral AI** ([console.mistral.ai](https://console.mistral.ai/)), OpenAI, Anthropic Claude, Google Gemini ve yerel Ollama desteği.
+
 ---
 
 ## 🇹🇷 Türkçe Dokümantasyon
+
 
 ### 📋 İçindekiler
 1. [Proje Vizyonu](#-proje-vizyonu)
@@ -224,9 +227,13 @@ AetherNet is an all-in-one desktop network management hub designed to provide im
 - **Multilingual Support (i18n)**: Native support for Turkish (Default), English, German, and Spanish.
 - **Developer Attribution**: Dedicated developer profile card and GitHub link ([https://github.com/MrSpy00](https://github.com/MrSpy00)).
 
+#### 9. 🤖 Pluggable AI Provider Layer
+- **Multi-Provider Support**: Integrated natural language network diagnostic assistance supporting **DeepSeek**, **Groq Cloud** ([console.groq.com/keys](https://console.groq.com/keys)), **Mistral AI** ([console.mistral.ai](https://console.mistral.ai/)), OpenAI, Anthropic Claude, Google Gemini, and local Ollama models with automatic provider fallback.
+
 ---
 
 ### 📐 Project Architecture and Directory Structure
+
 
 ```
 AetherNet/

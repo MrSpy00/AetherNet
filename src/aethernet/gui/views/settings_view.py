@@ -37,7 +37,24 @@ class SettingsView(QWidget):
         row_theme.addWidget(self.combo_theme)
         layout.addLayout(row_theme)
 
+        # AI Provider Selection
+        row_ai = QHBoxLayout()
+        row_ai.addWidget(QLabel("AI Sağlayıcı (AI Provider):"))
+        self.combo_ai_provider = QComboBox()
+        self.combo_ai_provider.addItems([
+            "DeepSeek AI",
+            "Groq Cloud (https://console.groq.com/keys)",
+            "Mistral AI (https://console.mistral.ai/)",
+            "OpenAI",
+            "Anthropic Claude",
+            "Google Gemini",
+            "Ollama Local"
+        ])
+        row_ai.addWidget(self.combo_ai_provider)
+        layout.addLayout(row_ai)
+
         # Scan Interval
+
         row_interval = QHBoxLayout()
         row_interval.addWidget(QLabel("Otomatik Yenileme Aralığı (Saniye):"))
         self.spin_interval = QSpinBox()
