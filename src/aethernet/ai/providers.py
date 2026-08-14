@@ -36,7 +36,7 @@ class DeepSeekProvider(BaseAiProvider):
         return "DeepSeek yanıt üretemedi."
 
 class GroqProvider(BaseAiProvider):
-    """Groq Cloud Llama-3 / Mixtral API Provider (https://console.groq.com/keys)"""
+    """Groq Cloud (openai/gpt-oss-120b) API Provider (https://console.groq.com/keys)"""
     def ask(self, prompt: str, system_prompt: str = "") -> str:
         api_key = os.getenv("GROQ_API_KEY")
         if not api_key:
@@ -46,7 +46,8 @@ class GroqProvider(BaseAiProvider):
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {api_key}"},
                 json={
-                    "model": "llama-3.3-70b-versatile",
+                    "model": "openai/gpt-oss-120b",
+                    "reasoning_effort": "medium",
                     "messages": [
                         {"role": "system", "content": system_prompt or "Sen kıdemli bir ağ ve güvenlik uzmanısın."},
                         {"role": "user", "content": prompt}
