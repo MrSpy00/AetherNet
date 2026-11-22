@@ -5,7 +5,7 @@
 [![Executable Size](https://img.shields.io/badge/Executable-54.7%20MB-cyan.svg)](dist/AetherNet.exe)
 [![License](https://img.shields.io/badge/License-MIT-purple.svg)](LICENSE)
 
-> **AetherNet**, kablosuz ağ adaptörlerinizi, aktif bağlantılarınızı, kayıtlı profillerinizi ve çevrenizdeki WiFi ortamını eksiksiz görüntüleyip yönetmenizi sağlayan; aynı zamanda gelişmiş ağ tanılamaları, yerel cihaz envanteri, harita & coğrafi konum istihbaratı, güvenlik/savunma analizleri, AI sağlayıcıları ve yetkilendirilmiş pentest araç entegrasyonlarını tek bir Cyber-Noir arayüzde birleştiren yüksek performanslı masaüstü ağ yönetim hub'ıdır.
+> **AetherNet**, kablosuz ağ adaptörlerinizi, aktif bağlantılarınızı, kayıtlı profillerinizi ve çevrenizdeki WiFi ortamını görüntüleyip yönetmenizi sağlayan; ağ tanılamaları, yerel cihaz envanteri, coğrafi konum görünümü, güvenlik analizleri, AI sağlayıcıları ve yetki onaylı pentest araç entegrasyonlarını tek bir PySide6 masaüstü arayüzünde toplayan ağ yönetim hub'ıdır.
 
 ---
 
@@ -21,7 +21,7 @@
 | :---: | :---: |
 | ![Tools TR](assets/screenshots/tools_tr.png) | ![Security TR](assets/screenshots/security_tr.png) |
 
-| API Hub & Coğrafi Konum Haritası | Certified Pentest Orchestrator |
+| API Hub & Coğrafi Konum Haritası | Authorized Pentest Orchestrator |
 | :---: | :---: |
 | ![API Hub TR](assets/screenshots/api_hub_tr.png) | ![Pentest TR](assets/screenshots/pentest_tr.png) |
 
@@ -80,7 +80,7 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 #### 7. 🤖 AI Sağlayıcı Entegrasyonu
 - **Çoklu AI Desteği**: Doğal dilde ağ analizi ve tanılama için DeepSeek, Groq Cloud ([console.groq.com/keys](https://console.groq.com/keys)), Mistral AI ([console.mistral.ai](https://console.mistral.ai/)), OpenAI, Anthropic Claude, Google Gemini ve yerel Ollama entegrasyonu.
 
-#### 8. ⚡ Certified Pentest Orchestrator
+#### 8. ⚡ Authorized Pentest Orchestrator
 - **Yetkilendirme Kapısı (Authorization Gate)**: Kullanıcının yalnızca sahibi olduğu veya yazılı izin aldığı ağlarda tarama yapacağını taahhüt ettiği yasal onay ekranı.
 - **Harici Araç Entegrasyonu**: Nmap ve Tshark gibi endüstri standardı güvenlik araçlarının subprocess orkestrasyonu.
 - **Audit Logging**: Tüm tarama eylemlerinin zaman damgalı olarak `logs/audit.jsonl` dosyasına kaydedilmesi.
@@ -94,7 +94,7 @@ AetherNet, hem günlük kullanıcılar için *"WiFi'ım neden yavaş?"* veya *"A
 #### 10. 🎨 PySide6 GUI & UX
 - **Cyber-Noir Dark & Aegis Violet Tema**: Neon vurgulara sahip modern QSS arayüz tasarımı.
 - **Çoklu Dil (i18n)**: Türkçe (Varsayılan), İngilizce, Almanca ve İspanyolca dil desteği.
-- **Yüksek Performans & Ultra Küçük Boyut**: Optimizasyonlu derleme ile yalnızca **48.2 MB** `.exe` boyutu.
+- **Tek Dosya Derleme:** PyInstaller ile **48.2 MB** `.exe` boyutu.
 
 ---
 
@@ -210,7 +210,7 @@ Bu proje **[MrSpy00](https://github.com/MrSpy00)** tarafından geliştirilmişti
 | :---: | :---: |
 | ![Tools EN](assets/screenshots/tools_en.png) | ![Security EN](assets/screenshots/security_en.png) |
 
-| API Hub & Geolocation Cyber Radar | Certified Pentest Orchestrator |
+| API Hub & Geolocation Cyber Radar | Authorized Pentest Orchestrator |
 | :---: | :---: |
 | ![API Hub EN](assets/screenshots/api_hub_en.png) | ![Pentest EN](assets/screenshots/pentest_en.png) |
 
@@ -267,7 +267,7 @@ AetherNet is an all-in-one desktop network management hub designed to provide im
 #### 7. 🤖 AI Provider Integration
 - **Multi-AI Provider**: Natural language network diagnostics supporting DeepSeek, Groq Cloud ([console.groq.com/keys](https://console.groq.com/keys)), Mistral AI ([console.mistral.ai](https://console.mistral.ai/)), OpenAI, Anthropic Claude, Google Gemini, and local Ollama.
 
-#### 8. ⚡ Certified Pentest Orchestrator
+#### 8. ⚡ Authorized Pentest Orchestrator
 - **Authorization Gate**: Disclaimer gate requiring explicit user consent.
 - **Tool Orchestration**: Subprocess orchestration layer for Nmap and Tshark.
 - **Audit Logging**: Time-stamped JSONL audit trail recorded in `logs/audit.jsonl`.
@@ -281,7 +281,7 @@ AetherNet is an all-in-one desktop network management hub designed to provide im
 #### 10. 🎨 PySide6 GUI & UX
 - **Cyber-Noir Dark & Aegis Violet Themes**: Sleek QSS desktop user interface featuring neon cyan/purple accents.
 - **Multilingual Support (i18n)**: Native support for Turkish (Default), English, German, and Spanish.
-- **Ultra Compact Standalone Executable**: High-efficiency build resulting in a single **48.2 MB** binary (`dist/AetherNet.exe`).
+- **Standalone Executable:** Single-file **48.2 MB** build (`dist/AetherNet.exe`).
 
 ---
 
